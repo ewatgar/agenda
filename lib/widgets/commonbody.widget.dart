@@ -13,7 +13,7 @@ class CommonBody extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-              Colors.white,
+              theme.colorScheme.background,
               theme.colorScheme.secondary.withAlpha(100)
             ])),
         child: Container(alignment: Alignment.topCenter, child: child));

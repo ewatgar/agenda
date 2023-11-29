@@ -16,10 +16,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: false,
-      ),
+      //theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),useMaterial3: false,),
+      theme: ThemeData.dark(useMaterial3: false).copyWith(
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.cyan, background: Colors.black)),
       home: ContactListPage(),
     );
   }

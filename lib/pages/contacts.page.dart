@@ -30,7 +30,7 @@ class _ContactsPageState extends State<ContactsPage> {
             IconButton(
                 onPressed: () {
                   setState(() {
-                    agenda.sortAZ();
+                    agenda.isSortedAZ ? agenda.sortZA() : agenda.sortAZ();
                   });
                 },
                 icon: Icon(agenda.isSortedAZ
@@ -60,7 +60,7 @@ class _ContactsPageState extends State<ContactsPage> {
           BackgroundGradient(
               primary: theme.colorScheme.primary,
               background: theme.colorScheme.background.withAlpha(100),
-              child: Text("lmao"))
+              child: Text("WIP"))
         ]),
         bottomNavigationBar: TabBar(tabs: [
           Tab(text: "Contactos", icon: Icon(Icons.contacts)),

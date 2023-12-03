@@ -1,8 +1,10 @@
-class ContactData {
+import 'package:flutter/material.dart';
+
+class ContactData extends ChangeNotifier {
   //CAMPOS---------------------------------------------------------------------
   int id;
-  String name;
-  String surname;
+  String? name;
+  String? surname;
   String? email;
   String? phone;
   DateTime? birthdate;
@@ -14,8 +16,8 @@ class ContactData {
   //CONSTRUCTORES--------------------------------------------------------------
   ContactData({
     required this.id,
-    required this.name,
-    required this.surname,
+    this.name,
+    this.surname,
     this.email,
     this.phone,
     this.birthdate,
@@ -32,8 +34,10 @@ class ContactData {
         surname: json["surname"],
         email: json["email"],
         phone: json["phone"],
-        creation: json["creation"],
-        modification: json["modification"],
+        birthdate: DateTime.tryParse(json["birthdate"]),
+        creation: DateTime.tryParse(json["creation"]),
+        modification: DateTime.tryParse(json["modification"]),
+        isFavorite: json["isFavorite"],
         labels: json["labels"]);
   }
 
@@ -43,8 +47,8 @@ class ContactData {
     return [
       'CONTACTO (',
       '\tId: $id',
-      '\tNombre: $name',
-      '\tApellido: $surname',
+      if (name != null) '\tNombre: $name',
+      if (surname != null) '\tApellido: $surname',
       if (email != null) '\tEmail: $email',
       if (phone != null) '\tTelefono: $phone',
       if (birthdate != null) '\tFecha de nacimiento: $birthdate',
@@ -59,12 +63,12 @@ class ContactData {
   Map<String, dynamic> toJson() {
     return {
       "id": id,
-      "nombre": name,
-      "apellido": surname,
+      if (name != null) "nombre": name,
+      if (surname != null) "apellido": surname,
       if (email != null) "email": email,
       if (phone != null) "phone": phone,
       if (birthdate != null) "birthdate": birthdate,
-      "creation": creation,
+      if (creation != null) "creation": creation,
       if (modification != null) "modification": modification,
       if (birthdate != null) "birthdate": birthdate,
       if (labels != null) "etiquetas": List.from(labels!),
@@ -101,7 +105,7 @@ class ContactData {
 
   ContactData copyValuesFrom(ContactData copyFrom) {
     return ContactData(
-      id: id,
+      id: copyFrom.id,
       name: copyFrom.name,
       surname: copyFrom.surname,
       email: copyFrom.email,

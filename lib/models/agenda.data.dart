@@ -1,8 +1,9 @@
 // ignore_for_file: avoid_print
 
 import 'package:agenda/models/contact.data.dart';
+import 'package:flutter/material.dart';
 
-class AgendaData {
+class AgendaData extends ChangeNotifier {
   //CAMPOS---------------------------------------------------------------------
   List<ContactData> contacts;
 

@@ -21,8 +21,8 @@ Map<String, dynamic> agendaJson = {
       "birthdate": "1990-08-12",
       "creation": "2021-11-10",
       "modification": "2023-01-18",
-      "isFavorite": false,
-      "labels": ["amistad"]
+      "isFavorite": true,
+      "labels": ["amistad", "pareja"]
     },
     {
       "id": 3,
@@ -34,7 +34,7 @@ Map<String, dynamic> agendaJson = {
       "creation": "2023-02-15",
       "modification": "2023-04-10",
       "isFavorite": true,
-      "labels": ["deporte"]
+      //"labels": ["deporte"]
     },
     {
       "id": 4,
@@ -46,7 +46,7 @@ Map<String, dynamic> agendaJson = {
       "creation": "2022-09-05",
       "modification": "2023-05-15",
       "isFavorite": false,
-      "labels": ["amistad", "trabajo"]
+      "labels": ["colega", "amistad", "trabajo"]
     },
     {
       "id": 5,
@@ -58,7 +58,7 @@ Map<String, dynamic> agendaJson = {
       "creation": "2022-03-10",
       "modification": "2023-03-01",
       "isFavorite": true,
-      "labels": ["familia"]
+      "labels": ["profesor"]
     },
     {
       "id": 6,

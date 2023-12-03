@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:agenda/models/contact.data.dart';
+import 'package:agenda/widgets/labelicon.widget.dart';
 import 'package:flutter/material.dart';
 
 class ContactTile extends StatelessWidget {
@@ -14,7 +15,7 @@ class ContactTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        leading: Icon(Icons.ac_unit),
+        leading: LabelIcon(labels: contact.labels),
         title: Text("${contact.name} ${contact.surname}"),
         subtitle: Text(
             "${contact.email ?? ""}${contact.email != null && contact.phone != null ? ", " : ""}${contact.phone ?? ""}"),

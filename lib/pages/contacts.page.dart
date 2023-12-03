@@ -28,7 +28,14 @@ class _ContactsPageState extends State<ContactsPage> {
           title: Text("Agenda"),
           actions: [
             IconButton(
-                onPressed: () {}, icon: Icon(FontAwesomeIcons.arrowDownAZ)),
+                onPressed: () {
+                  setState(() {
+                    agenda.sortAZ();
+                  });
+                },
+                icon: Icon(agenda.isSortedAZ
+                    ? FontAwesomeIcons.arrowDownZA
+                    : FontAwesomeIcons.arrowDownAZ)),
             IconButton(onPressed: () {}, icon: Icon(Icons.filter_alt))
           ],
         ),

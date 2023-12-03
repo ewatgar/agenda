@@ -1,14 +1,16 @@
 // ignore_for_file: avoid_print
 
 import 'package:agenda/models/contact.data.dart';
+import 'package:agenda/models/diacriticsCaseAwareCompareTo.fun.dart';
 import 'package:flutter/material.dart';
 
 class AgendaData extends ChangeNotifier {
   //CAMPOS---------------------------------------------------------------------
   List<ContactData> contacts;
+  bool isSortedAZ;
 
   //CONSTRUCTORES--------------------------------------------------------------
-  AgendaData({this.contacts = const []});
+  AgendaData({this.contacts = const []}) : isSortedAZ = false;
 
   factory AgendaData.fromJson(Map<String, dynamic> json) {
     List<Map<String, dynamic>> contactsJson = json["contacts"];
@@ -39,5 +41,30 @@ class AgendaData extends ChangeNotifier {
   //METODOS COPY -------------------------------------------------------------
   AgendaData copyWith({required List<ContactData>? contacts}) {
     return AgendaData(contacts: contacts ?? this.contacts);
+  }
+
+  //METODOS ORDENAR ----------------------------------------------------------
+  void sortAZ() {
+    contacts.sort((a, b) {
+      String aFullName = "${a.name} ${a.surname}";
+      String bFullName = "${b.name} ${b.surname}";
+
+      return diacriticsCaseAwareCompareTo(
+          aFullName.toString(), bFullName.toString());
+    });
+    isSortedAZ = true;
+    notifyListeners();
+  }
+
+  void sortZA() {
+    contacts.sort((a, b) {
+      String aFullName = "${a.name} ${a.surname}";
+      String bFullName = "${b.name} ${b.surname}";
+
+      return diacriticsCaseAwareCompareTo(
+          bFullName.toString(), aFullName.toString());
+    });
+    isSortedAZ = false;
+    notifyListeners();
   }
 }

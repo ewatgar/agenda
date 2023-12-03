@@ -16,7 +16,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AgendaData agenda = AgendaData.fromJson(agendaJson);
-
     ThemeData theme = ThemeData.dark(useMaterial3: false);
 
     return ChangeNotifierProvider<AgendaData>(

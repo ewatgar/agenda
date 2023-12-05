@@ -55,6 +55,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
     //se necesita un controlador para cada campo del formulario
     if (_formKey.currentState!.validate()) {
       print("PERFECTO, todos los campos estan bien");
+      //widget.aditivo.codigo = codAditivoController.text;
     } else {
       print("Algun campo no está bien");
     }
@@ -70,7 +71,6 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
   }
 
   String? _onValidateObligatorio(String? value) {
-    //TODO implementar check email regex
     if (value == null || value.trim().isEmpty) {
       return "Campo obligatorio";
     }

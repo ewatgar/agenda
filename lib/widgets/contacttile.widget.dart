@@ -21,29 +21,55 @@ class ContactTile extends StatelessWidget {
 
     return ListTile(
         onTap: () {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => ContactDetailsPage()));
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ContactDetailsPage(contact: contact)));
         },
         leading: LabelIcon(labels: contact.labels),
         title: Text("${contact.name} ${contact.surname}"),
         subtitle: Text(
             "${contact.email ?? ""}${contact.email != null && contact.phone != null ? ", " : ""}${contact.phone ?? ""}"),
-        trailing: PopupMenuButton(
-          onSelected: (value) {
+        trailing: PopupMenuButton<int>(
+          onSelected: (int value) {
             if (value == 1) {
-              /* */
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ContactDetailsPage(contact: contact)));
             } else if (value == 2) {
-            } else if (value == 3) {}
+              print("Editar ${contact.name}");
+            } else if (value == 3) {
+              print("Eliminar ${contact.name}");
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text("Atención"),
+                  content: Text(
+                      "Estás a punto de borrar un contacto, ¿Estás seguro?"),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          agenda.dropContact(id: contact.id);
+                          Navigator.of(context).pop();
+                        },
+                        child: Text("Aceptar")),
+                    TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text("Cancelar"))
+                  ],
+                ),
+              );
+            }
           },
           itemBuilder: ((context) => [
                 PopupMenuItem(
+                    value: 1,
                     child: ListTile(
                         leading: Icon(Icons.remove_red_eye),
                         title: Text("Ver"))),
                 PopupMenuItem(
+                    value: 2,
                     child: ListTile(
                         leading: Icon(Icons.edit), title: Text("Editar"))),
                 PopupMenuItem(
+                    value: 3,
                     child: ListTile(
                         leading: Icon(Icons.delete), title: Text("Eliminar")))
               ]),

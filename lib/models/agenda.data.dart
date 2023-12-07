@@ -67,4 +67,13 @@ class AgendaData extends ChangeNotifier {
     isSortedAZ = false;
     notifyListeners();
   }
+
+  //METODOS MISC ----------------------------------------------------------
+  void dropContact({required int id}) {
+    bool exists = contacts.any((e) => e.id == id);
+    if (exists) {
+      contacts.removeWhere((e) => e.id == id);
+      notifyListeners();
+    }
+  }
 }

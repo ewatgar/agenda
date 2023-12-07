@@ -6,7 +6,7 @@ Map<String, dynamic> agendaJson = {
       "surname": "Gutiérrez",
       //"email": "carlos@example.com",
       "phone": "+123456789",
-      "birthdate": "1987-03-25",
+      //"birthdate": "1987-03-25",
       "creation": "2022-01-15",
       "modification": "2023-03-22",
       "isFavorite": true,

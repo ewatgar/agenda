@@ -34,9 +34,9 @@ class ContactData extends ChangeNotifier {
         surname: json["surname"],
         email: json["email"],
         phone: json["phone"],
-        birthdate: DateTime.tryParse(json["birthdate"]),
-        creation: DateTime.tryParse(json["creation"]),
-        modification: DateTime.tryParse(json["modification"]),
+        birthdate: DateTime.tryParse(json["birthdate"] ?? ""),
+        creation: DateTime.tryParse(json["creation"] ?? ""),
+        modification: DateTime.tryParse(json["modification"] ?? ""),
         isFavorite: json["isFavorite"],
         labels: json["labels"]);
   }

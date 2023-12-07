@@ -1,89 +1,102 @@
-// ignore_for_file: prefer_const_constructors, avoid_print, curly_braces_in_flow_control_structures
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:agenda/models/contact.data.dart';
+import 'package:agenda/widgets/labelicon.widget.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class ContactDetailsPage extends StatefulWidget {
-  const ContactDetailsPage({super.key});
+  const ContactDetailsPage({super.key, required this.contact});
+
+  final ContactData contact;
 
   @override
   State<ContactDetailsPage> createState() => _ContactDetailsPageState();
 }
 
 class _ContactDetailsPageState extends State<ContactDetailsPage> {
-  late TextEditingController emailContactController;
-
-  //keys para la reorganización manual de la lista (arrastrar elementos)
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    super.initState();
-    emailContactController = TextEditingController(text: "Valor inicial");
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    emailContactController.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Detalle de contacto"),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.save))],
-      ),
-      body: Form(
-          child: Column(
-        children: [
-          TextFormField(
-            controller: emailContactController,
-            validator: _onValidateEmailContact,
-            decoration: InputDecoration(
-              labelText: "email",
-              hintText: "hint",
-              border: OutlineInputBorder(),
-            ),
-          )
-        ],
-      )),
-    );
-  }
+    ThemeData theme = Theme.of(context);
+    ContactData c = widget.contact; //por comodidad
+    DateFormat format = DateFormat("MMM dd, yyyy");
 
-  void _onSave() {
-    //se necesita un controlador para cada campo del formulario
-    if (_formKey.currentState!.validate()) {
-      print("PERFECTO, todos los campos estan bien");
-      //widget.aditivo.codigo = codAditivoController.text;
-    } else {
-      print("Algun campo no está bien");
-    }
-    print(emailContactController.text);
-  }
+    String strLabels = c.labels
+            ?.map((e) => e[0].toUpperCase() + e.substring(1))
+            .reduce((value, element) => element += ", $value") ??
+        "n/a";
 
-  void _saveChanges(BuildContext context) {
-    Navigator.of(context).pop<bool>(true);
-  }
-
-  void _cancelChanges(BuildContext context) {
-    Navigator.of(context).pop<bool>(false);
-  }
-
-  String? _onValidateObligatorio(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return "Campo obligatorio";
-    }
-    return null;
-  }
-
-  String? _onValidateEmailContact(String? value) {
-    //TODO implementar check email regex
-    if (value == null || value.trim().isEmpty) {
-      return "Campo obligatorio";
-    }
-    //buscar regex email
-
-    return null;
+    return ListenableBuilder(
+        listenable: widget.contact,
+        builder: (context, child) {
+          return Scaffold(
+              appBar: AppBar(
+                actions: [
+                  IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+                  IconButton(onPressed: () {}, icon: Icon(Icons.star))
+                ],
+              ),
+              body: ListView(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: CircleAvatar(
+                      radius: 100,
+                      child: LabelIcon(labels: c.labels, size: 100),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Center(
+                      child: Text(
+                        "${c.name} ${c.surname}",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: theme.textTheme.headlineMedium!.fontSize),
+                      ),
+                    ),
+                  ),
+                  Divider(thickness: 2),
+                  ListTile(
+                      title: Text("Correo electrónico",
+                          style: theme.textTheme.titleMedium),
+                      subtitle: Text(c.email ?? "n/a",
+                          style: theme.textTheme.headlineSmall),
+                      trailing: Icon(Icons.email)),
+                  Divider(thickness: 2),
+                  ListTile(
+                      title:
+                          Text("Teléfono", style: theme.textTheme.titleMedium),
+                      subtitle: Text(widget.contact.phone ?? "n/a",
+                          style: theme.textTheme.headlineSmall),
+                      trailing: Icon(Icons.phone)),
+                  Divider(thickness: 2),
+                  ListTile(
+                    title:
+                        Text("Nacimiento", style: theme.textTheme.titleMedium),
+                    subtitle: Text(
+                        c.birthdate != null
+                            ? format.format(c.birthdate!)
+                            : "n/a",
+                        style: theme.textTheme.headlineSmall),
+                  ),
+                  /*Row(
+                    children: [ListTile(title: Text("a")), Text("b")],
+                  )*/
+                  Divider(thickness: 2),
+                  ListTile(
+                    title:
+                        Text("Etiquetas", style: theme.textTheme.titleMedium),
+                    subtitle:
+                        Text(strLabels, style: theme.textTheme.headlineSmall),
+                  ),
+                  Divider(thickness: 2),
+                  Center(child: Text("Añadido en ${c.creation}")),
+                  SizedBox(height: 5),
+                  Center(child: Text("Editado en ${c.creation}")),
+                ],
+              ));
+        });
   }
 }

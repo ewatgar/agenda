@@ -58,9 +58,23 @@ class _ContactsPageState extends State<ContactsPage> {
           ),
           //TABVIEW FAVORITOS
           BackgroundGradient(
-              primary: theme.colorScheme.primary,
-              background: theme.colorScheme.background.withAlpha(100),
-              child: Text("WIP"))
+            primary: theme.colorScheme.primary,
+            background: theme.colorScheme.background.withAlpha(100),
+            child: ListenableBuilder(
+                listenable: agenda,
+                builder: (context, child) {
+                  List<ContactData> listContactsFav = agenda.contacts
+                      .where((e) => e.isFavorite == true)
+                      .toList();
+                  return ListView.builder(
+                    itemCount: listContactsFav.length,
+                    itemBuilder: (context, index) {
+                      ContactData contactFav = listContactsFav[index];
+                      return ContactTile(contact: contactFav);
+                    },
+                  );
+                }),
+          )
         ]),
         bottomNavigationBar: TabBar(tabs: [
           Tab(text: "Contactos", icon: Icon(Icons.contacts)),

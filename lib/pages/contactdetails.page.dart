@@ -34,7 +34,11 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
               appBar: AppBar(
                 actions: [
                   IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.star))
+                  IconButton(
+                      onPressed: () {
+                        setState(() => c.isFavorite = !c.isFavorite);
+                      },
+                      icon: Icon(c.isFavorite ? Icons.star : Icons.star_border))
                 ],
               ),
               body: ListView(

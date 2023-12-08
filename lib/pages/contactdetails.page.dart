@@ -4,7 +4,6 @@ import 'package:agenda/models/contact.data.dart';
 import 'package:agenda/widgets/labelicon.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class ContactDetailsPage extends StatefulWidget {
   const ContactDetailsPage({super.key, required this.contact});
@@ -17,6 +16,8 @@ class ContactDetailsPage extends StatefulWidget {
 
 class _ContactDetailsPageState extends State<ContactDetailsPage> {
   late ContactData copy;
+  late String labelsText;
+  bool modified = false;
 
   @override
   void initState() {
@@ -27,19 +28,19 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    //ContactData copy = widget.contact.copyWith();
     DateFormat format = DateFormat("MMM dd, yyyy");
-
-    String strLabels = widget.contact.labels
+    String strLabels = copy.labels
             ?.map((e) => e[0].toUpperCase() + e.substring(1))
-            .reduce((value, element) => element += ", $value") ??
+            .reduce((value, element) => value += ", $element") ??
         "n/a";
 
     return WillPopScope(
       onWillPop: () {
-        //ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("prueba")));
-        widget.contact.isFavorite = copy.isFavorite;
-        widget.contact.modification = DateTime.now();
+        if (modified) {
+          widget.contact.isFavorite = copy.isFavorite;
+          widget.contact.labels = copy.labels;
+          widget.contact.modification = DateTime.now();
+        }
         Navigator.pop(context);
         return Future.value(true);
       },
@@ -54,6 +55,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                         onPressed: () {
                           setState(() {
                             copy.isFavorite = !copy.isFavorite;
+                            modified = true;
                           });
                         },
                         icon: Icon(
@@ -111,6 +113,54 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                     )*/
                     Divider(thickness: 2),
                     ListTile(
+                      onTap: () {
+                        showModalBottomSheet(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          context: context,
+                          builder: (context) {
+                            return SingleChildScrollView(
+                              padding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom),
+                              child: Container(
+                                height: 150,
+                                padding: EdgeInsets.all(20),
+                                child: Column(
+                                  children: [
+                                    TextFormField(
+                                      decoration: InputDecoration(
+                                          enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.white))),
+                                      initialValue: strLabels,
+                                      onChanged: (value) {
+                                        labelsText = value;
+                                        modified = true;
+                                      },
+                                    ),
+                                    SizedBox(height: 10),
+                                    TextButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            copy.labels = labelsText
+                                                .split(",")
+                                                .map((e) =>
+                                                    e.trim().toLowerCase())
+                                                .where((e) => e.isNotEmpty)
+                                                .toList();
+                                            modified = true;
+                                          });
+                                        },
+                                        child: Text("Aplicar"))
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
                       title:
                           Text("Etiquetas", style: theme.textTheme.titleMedium),
                       subtitle:

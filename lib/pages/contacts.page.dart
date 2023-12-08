@@ -36,7 +36,38 @@ class _ContactsPageState extends State<ContactsPage> {
                 icon: Icon(agenda.isSortedAZ
                     ? FontAwesomeIcons.arrowDownZA
                     : FontAwesomeIcons.arrowDownAZ)),
-            IconButton(onPressed: () {}, icon: Icon(Icons.filter_alt))
+            PopupMenuButton(
+              icon: Icon(Icons.filter_alt),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5)),
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                    child: SwitchListTile(
+                        title: Text("Amistad"),
+                        onChanged: (value) {},
+                        value: false)),
+                PopupMenuItem(
+                    child: SwitchListTile(
+                        title: Text("Deporte"),
+                        onChanged: (value) {},
+                        value: false)),
+                PopupMenuItem(
+                    child: SwitchListTile(
+                        title: Text("Familia"),
+                        onChanged: (value) {},
+                        value: false)),
+                PopupMenuItem(
+                    child: SwitchListTile(
+                        title: Text("Trabajo"),
+                        onChanged: (value) {},
+                        value: false)),
+                PopupMenuItem(
+                    child: SwitchListTile(
+                        title: Text("No etiquetados"),
+                        onChanged: (value) {},
+                        value: false))
+              ],
+            )
           ],
         ),
         body: TabBarView(children: <Widget>[

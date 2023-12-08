@@ -17,6 +17,7 @@ class ContactTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
     AgendaData agenda = Provider.of<AgendaData>(context);
 
     return ListTile(
@@ -29,6 +30,7 @@ class ContactTile extends StatelessWidget {
         subtitle: Text(
             "${contact.email ?? ""}${contact.email != null && contact.phone != null ? ", " : ""}${contact.phone ?? ""}"),
         trailing: PopupMenuButton<int>(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           onSelected: (int value) {
             if (value == 1) {
               Navigator.of(context).push(MaterialPageRoute(
@@ -40,17 +42,23 @@ class ContactTile extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: Text("Atención"),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  title: Text(
+                    "Atención",
+                    style: theme.textTheme.headlineSmall,
+                  ),
                   content: Text(
                       "Estás a punto de borrar un contacto, ¿Estás seguro?"),
+                  actionsAlignment: MainAxisAlignment.center,
                   actions: [
-                    TextButton(
+                    OutlinedButton(
                         onPressed: () {
                           agenda.dropContact(id: contact.id);
                           Navigator.of(context).pop();
                         },
                         child: Text("Aceptar")),
-                    TextButton(
+                    OutlinedButton(
                         onPressed: () => Navigator.of(context).pop(),
                         child: Text("Cancelar"))
                   ],
@@ -58,21 +66,23 @@ class ContactTile extends StatelessWidget {
               );
             }
           },
-          itemBuilder: ((context) => [
-                PopupMenuItem(
-                    value: 1,
-                    child: ListTile(
-                        leading: Icon(Icons.remove_red_eye),
-                        title: Text("Ver"))),
-                PopupMenuItem(
-                    value: 2,
-                    child: ListTile(
-                        leading: Icon(Icons.edit), title: Text("Editar"))),
-                PopupMenuItem(
-                    value: 3,
-                    child: ListTile(
-                        leading: Icon(Icons.delete), title: Text("Eliminar")))
-              ]),
+          itemBuilder: (context) => [
+            PopupMenuItem(
+                value: 1,
+                child: ListTile(
+                    leading: Icon(Icons.remove_red_eye), title: Text("Ver"))),
+            PopupMenuItem(
+                value: 2,
+                child:
+                    ListTile(leading: Icon(Icons.edit), title: Text("Editar"))),
+            PopupMenuItem(
+                value: 3,
+                child: ListTile(
+                    iconColor: Colors.redAccent[100],
+                    textColor: Colors.redAccent[100],
+                    leading: Icon(Icons.delete),
+                    title: Text("Eliminar")))
+          ],
         ));
   }
 }

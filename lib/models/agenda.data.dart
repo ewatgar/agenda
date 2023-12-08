@@ -8,9 +8,12 @@ class AgendaData extends ChangeNotifier {
   //CAMPOS---------------------------------------------------------------------
   List<ContactData> contacts;
   bool isSortedAZ;
+  List<String> filterLabels;
 
   //CONSTRUCTORES--------------------------------------------------------------
-  AgendaData({this.contacts = const []}) : isSortedAZ = false;
+  AgendaData({this.contacts = const []})
+      : isSortedAZ = false,
+        filterLabels = [];
 
   factory AgendaData.fromJson(Map<String, dynamic> json) {
     List<Map<String, dynamic>> contactsJson = json["contacts"];

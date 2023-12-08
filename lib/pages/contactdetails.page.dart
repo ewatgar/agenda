@@ -35,6 +35,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
         "n/a";
 
     return WillPopScope(
+      //AL SALIR DE LA PAGINA
       onWillPop: () {
         if (modified) {
           widget.contact.isFavorite = copy.isFavorite;
@@ -50,7 +51,9 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
             return Scaffold(
                 appBar: AppBar(
                   actions: [
+                    //BOTON EDITAR
                     IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+                    //BOTON FAVORITO
                     IconButton(
                         onPressed: () {
                           setState(() {
@@ -108,12 +111,15 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                               : "n/a",
                           style: theme.textTheme.headlineSmall),
                     ),
+                    //TODO: falta edad
                     /*Row(
                       children: [ListTile(title: Text("a")), Text("b")],
                     )*/
                     Divider(thickness: 2),
+                    //ETIQUETAS
                     ListTile(
                       onTap: () {
+                        //GENERAR BOTTOMSHEET
                         showModalBottomSheet(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -129,6 +135,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                                 padding: EdgeInsets.all(20),
                                 child: Column(
                                   children: [
+                                    //TEXTFORMFIELD LABELS
                                     TextFormField(
                                       decoration: InputDecoration(
                                           enabledBorder: UnderlineInputBorder(
@@ -141,6 +148,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                                       },
                                     ),
                                     SizedBox(height: 10),
+                                    //BOTON APLICAR
                                     TextButton(
                                         onPressed: () {
                                           setState(() {

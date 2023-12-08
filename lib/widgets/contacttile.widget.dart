@@ -31,6 +31,7 @@ class ContactTile extends StatelessWidget {
             "${contact.email ?? ""}${contact.email != null && contact.phone != null ? ", " : ""}${contact.phone ?? ""}"),
         trailing: PopupMenuButton<int>(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          //LOGICA AL CLICKEAR OPCION MENU CONTACTO
           onSelected: (int value) {
             if (value == 1) {
               Navigator.of(context).push(MaterialPageRoute(
@@ -38,7 +39,7 @@ class ContactTile extends StatelessWidget {
             } else if (value == 2) {
               print("Editar ${contact.name}");
             } else if (value == 3) {
-              print("Eliminar ${contact.name}");
+              //DIALOGO ELIMINAR CONTACTO
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
@@ -66,6 +67,7 @@ class ContactTile extends StatelessWidget {
               );
             }
           },
+          //OPCIONES MENU CONTACTO
           itemBuilder: (context) => [
             PopupMenuItem(
                 value: 1,

@@ -2,6 +2,7 @@
 
 import 'package:agenda/models/agenda.data.dart';
 import 'package:agenda/models/contact.data.dart';
+import 'package:agenda/models/diacriticsCaseAwareCompareTo.fun.dart';
 import 'package:agenda/widgets/backgroundgradient.widget.dart';
 import 'package:agenda/widgets/contacttile.widget.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ class _ContactsPageState extends State<ContactsPage> {
         appBar: AppBar(
           title: Text("Agenda"),
           actions: [
+            //BOTON ORDENAR
             IconButton(
                 onPressed: () {
                   setState(() {
@@ -36,38 +38,33 @@ class _ContactsPageState extends State<ContactsPage> {
                 icon: Icon(agenda.isSortedAZ
                     ? FontAwesomeIcons.arrowDownZA
                     : FontAwesomeIcons.arrowDownAZ)),
+            //MENU FILTROS ETIQUETAS
             PopupMenuButton(
-              icon: Icon(Icons.filter_alt),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5)),
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                    child: SwitchListTile(
-                        title: Text("Amistad"),
-                        onChanged: (value) {},
-                        value: false)),
-                PopupMenuItem(
-                    child: SwitchListTile(
-                        title: Text("Deporte"),
-                        onChanged: (value) {},
-                        value: false)),
-                PopupMenuItem(
-                    child: SwitchListTile(
-                        title: Text("Familia"),
-                        onChanged: (value) {},
-                        value: false)),
-                PopupMenuItem(
-                    child: SwitchListTile(
-                        title: Text("Trabajo"),
-                        onChanged: (value) {},
-                        value: false)),
-                PopupMenuItem(
-                    child: SwitchListTile(
-                        title: Text("No etiquetados"),
-                        onChanged: (value) {},
-                        value: false))
-              ],
-            )
+                icon: Icon(Icons.filter_alt),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5)),
+                itemBuilder: (context) {
+                  List<String> currentLabels = agenda.contacts
+                      .fold<List<String>>(
+                          [], (ac, e) => [...ac, ...(e.labels ?? [])])
+                      .map((e) => e[0].toUpperCase() + e.substring(1))
+                      .toSet()
+                      .toList()
+                    ..sort((a, b) => diacriticsCaseAwareCompareTo(a, b));
+
+                  return [
+                    ...currentLabels.map((e) => PopupMenuItem(
+                        child: SwitchListTile(
+                            title: Text(e),
+                            onChanged: (value) {},
+                            value: false))),
+                    PopupMenuItem(
+                        child: SwitchListTile(
+                            title: Text("No etiquetados"),
+                            onChanged: (value) {},
+                            value: false))
+                  ];
+                })
           ],
         ),
         body: TabBarView(children: <Widget>[

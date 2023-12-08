@@ -29,7 +29,9 @@ class MyApp extends StatelessWidget {
             ),
             appBarTheme: AppBarTheme(color: const Color.fromARGB(0, 0, 0, 0)),
             colorScheme: ColorScheme.fromSeed(
-                seedColor: Colors.teal, background: Colors.black)),
+                //secondary: const Color.fromARGB(255, 0, 255, 229),
+                seedColor: Colors.teal,
+                background: Colors.black)),
         home: ContactsPage(),
       ),
     );

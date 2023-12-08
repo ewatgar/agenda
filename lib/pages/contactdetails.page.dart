@@ -34,8 +34,8 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
             .reduce((value, element) => value += ", $element") ??
         "n/a";
 
+    //AL SALIR DE LA PAGINA
     return WillPopScope(
-      //AL SALIR DE LA PAGINA
       onWillPop: () {
         if (modified) {
           widget.contact.isFavorite = copy.isFavorite;

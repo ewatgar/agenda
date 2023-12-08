@@ -21,6 +21,8 @@ class _ContactsPageState extends State<ContactsPage> {
   Widget build(BuildContext context) {
     AgendaData agenda = Provider.of<AgendaData>(context);
     ThemeData theme = Theme.of(context);
+    Color switchColor = theme.indicatorColor;
+    //Color switchColor = const Color.fromARGB(255, 2, 255, 230);
 
     return DefaultTabController(
       length: 2,
@@ -53,16 +55,38 @@ class _ContactsPageState extends State<ContactsPage> {
                     ..sort((a, b) => diacriticsCaseAwareCompareTo(a, b));
 
                   return [
-                    ...currentLabels.map((e) => PopupMenuItem(
-                        child: SwitchListTile(
-                            title: Text(e),
-                            onChanged: (value) {},
-                            value: false))),
+                    ...currentLabels.map((label) => PopupMenuItem(child:
+                            StatefulBuilder(builder: (context, setState) {
+                          return SwitchListTile(
+                              activeColor: switchColor,
+                              title: Text(label),
+                              onChanged: (value) {
+                                setState(() {
+                                  agenda.filterLabels.contains(label)
+                                      ? agenda.filterLabels.remove(label)
+                                      : agenda.filterLabels.add(label);
+                                  print(label);
+                                  print(agenda.filterLabels);
+                                });
+                              },
+                              value: !agenda.filterLabels.contains(label));
+                        }))),
                     PopupMenuItem(
-                        child: SwitchListTile(
-                            title: Text("No etiquetados"),
-                            onChanged: (value) {},
-                            value: false))
+                        child: StatefulBuilder(builder: (context, setState) {
+                      return SwitchListTile(
+                          activeColor: switchColor,
+                          title: Text("No etiquetados"),
+                          onChanged: (value) {
+                            setState(() {
+                              agenda.filterLabels.contains("noLabels")
+                                  ? agenda.filterLabels.remove("noLabels")
+                                  : agenda.filterLabels.add("noLabels");
+                              print("noLabels");
+                              print(agenda.filterLabels);
+                            });
+                          },
+                          value: !agenda.filterLabels.contains("noLabels"));
+                    }))
                   ];
                 })
           ],

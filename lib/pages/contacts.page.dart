@@ -4,6 +4,7 @@ import 'package:agenda/models/agenda.data.dart';
 import 'package:agenda/models/contact.data.dart';
 import 'package:agenda/models/diacriticsCaseAwareCompareTo.fun.dart';
 import 'package:agenda/models/label.enum.dart';
+import 'package:agenda/pages/contactcreation.page.dart';
 import 'package:agenda/widgets/backgroundgradient.widget.dart';
 import 'package:agenda/widgets/contacttile.widget.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,6 @@ class _ContactsPageState extends State<ContactsPage> {
   Widget build(BuildContext context) {
     AgendaData agenda = Provider.of<AgendaData>(context);
     ThemeData theme = Theme.of(context);
-    Color switchColor = theme.indicatorColor;
 
     return StatefulBuilder(builder: (context, setState) {
       return DefaultTabController(
@@ -59,7 +59,7 @@ class _ContactsPageState extends State<ContactsPage> {
                       ...currentLabels.map((label) => PopupMenuItem(child:
                               StatefulBuilder(builder: (context, setState) {
                             return SwitchListTile(
-                                activeColor: switchColor,
+                                activeColor: theme.indicatorColor,
                                 title: Text(label),
                                 onChanged: (value) {
                                   setState(() {
@@ -77,7 +77,7 @@ class _ContactsPageState extends State<ContactsPage> {
                       PopupMenuItem(
                           child: StatefulBuilder(builder: (context, setState) {
                         return SwitchListTile(
-                            activeColor: switchColor,
+                            activeColor: theme.indicatorColor,
                             title: Text("No etiquetados"),
                             onChanged: (value) {
                               setState(() {
@@ -100,7 +100,7 @@ class _ContactsPageState extends State<ContactsPage> {
               child: ListenableBuilder(
                   listenable: agenda,
                   builder: (context, child) {
-                    //LOGICA FILTRO
+                    //LOGICA FILTRO CONTACTOS
                     List<ContactData> contactsFilter =
                         agenda.contacts.where((e) {
                       List<String> labelPriorityList = (e.labels ?? [])
@@ -109,8 +109,6 @@ class _ContactsPageState extends State<ContactsPage> {
                       String firstLabel = labelPriorityList.isNotEmpty
                           ? labelPriorityList[0]
                           : 'noLabels';
-                      print("contact ${e.name}: firstLabel $firstLabel");
-                      print("filterLabels ${agenda.filterLabels}");
                       return !agenda.filterLabels.contains(firstLabel);
                     }).toList();
                     //LISTA CONTACTOS FILTRO
@@ -129,9 +127,22 @@ class _ContactsPageState extends State<ContactsPage> {
               child: ListenableBuilder(
                   listenable: agenda,
                   builder: (context, child) {
-                    List<ContactData> listContactsFav = agenda.contacts
+                    //LOGICA FILTRO FAVORITOS
+                    List<ContactData> contactsFilter =
+                        agenda.contacts.where((e) {
+                      List<String> labelPriorityList = (e.labels ?? [])
+                        ..sort(
+                            (a, b) => Label.parse(a).compareTo(Label.parse(b)));
+                      String firstLabel = labelPriorityList.isNotEmpty
+                          ? labelPriorityList[0]
+                          : 'noLabels';
+                      return !agenda.filterLabels.contains(firstLabel);
+                    }).toList();
+
+                    List<ContactData> listContactsFav = contactsFilter
                         .where((e) => e.isFavorite == true)
                         .toList();
+
                     return ListView.builder(
                       itemCount: listContactsFav.length,
                       itemBuilder: (context, index) {
@@ -142,6 +153,19 @@ class _ContactsPageState extends State<ContactsPage> {
                   }),
             )
           ]),
+          //FAB CREAR CONTACTO
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: const Color.fromARGB(255, 70, 70, 70),
+            foregroundColor: theme.indicatorColor,
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ContactCreationPage()));
+            },
+            child: Icon(Icons.add),
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          //TABS
           bottomNavigationBar: TabBar(tabs: [
             Tab(text: "Contactos", icon: Icon(Icons.contacts)),
             Tab(text: "Favoritos", icon: Icon(Icons.star)),

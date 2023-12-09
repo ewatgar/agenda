@@ -23,28 +23,22 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
   void initState() {
     super.initState();
     copy = widget.contact.copyWith();
+    labelsText = "";
   }
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    //DateFormat format = DateFormat("MMM dd, yyyy");
     DateFormat format = DateFormat.yMMMd();
-    String strLabels = copy.labels
-            ?.map((e) => e[0].toUpperCase() + e.substring(1))
-            .reduce((value, element) => value += ", $element") ??
-        "n/a";
+    String strLabels = (copy.labels ?? []).isNotEmpty
+        ? copy.labels!
+            .map((e) => e[0].toUpperCase() + e.substring(1))
+            .join(", ")
+        : "n/a";
 
-    //AL SALIR DE LA PAGINA
     return WillPopScope(
       onWillPop: () {
-        if (modified) {
-          widget.contact.isFavorite = copy.isFavorite;
-          widget.contact.labels = copy.labels;
-          widget.contact.modification = DateTime.now();
-        }
-        Navigator.pop(context);
-        return Future.value(true);
+        return _leavePageSave(context);
       },
       child: ListenableBuilder(
           listenable: widget.contact,
@@ -117,58 +111,9 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                       children: [ListTile(title: Text("a")), Text("b")],
                     )*/
                     Divider(thickness: 2),
-                    //ETIQUETAS
                     ListTile(
                       onTap: () {
-                        //GENERAR BOTTOMSHEET
-                        showModalBottomSheet(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          context: context,
-                          builder: (context) {
-                            return SingleChildScrollView(
-                              padding: EdgeInsets.only(
-                                  bottom:
-                                      MediaQuery.of(context).viewInsets.bottom),
-                              child: Container(
-                                height: 150,
-                                padding: EdgeInsets.all(20),
-                                child: Column(
-                                  children: [
-                                    //TEXTFORMFIELD LABELS
-                                    TextFormField(
-                                      decoration: InputDecoration(
-                                          enabledBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.white))),
-                                      initialValue: strLabels,
-                                      onChanged: (value) {
-                                        labelsText = value;
-                                        modified = true;
-                                      },
-                                    ),
-                                    SizedBox(height: 10),
-                                    //BOTON APLICAR
-                                    TextButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            copy.labels = labelsText
-                                                .split(",")
-                                                .map((e) =>
-                                                    e.trim().toLowerCase())
-                                                .where((e) => e.isNotEmpty)
-                                                .toList();
-                                            modified = true;
-                                          });
-                                        },
-                                        child: Text("Aplicar"))
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
+                        _showModalBottomSheetLabels(context, strLabels);
                       },
                       title:
                           Text("Etiquetas", style: theme.textTheme.titleMedium),
@@ -186,5 +131,70 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                 ));
           }),
     );
+  }
+
+  Future<bool> _leavePageSave(BuildContext context) {
+    if (modified) {
+      widget.contact.isFavorite = copy.isFavorite;
+      widget.contact.labels = copy.labels;
+      widget.contact.modification = DateTime.now();
+    }
+    Navigator.pop(context);
+    return Future.value(true);
+  }
+
+  Future<dynamic> _showModalBottomSheetLabels(
+      BuildContext context, String strLabels) {
+    return showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+      ),
+      context: context,
+      builder: (context) {
+        return SingleChildScrollView(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Container(
+            height: 150,
+            padding: EdgeInsets.all(20),
+            child: Column(
+              children: [
+                //TEXTFORMFIELD LABELS
+                TextFormField(
+                  decoration: InputDecoration(
+                      enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white))),
+                  initialValue: strLabels,
+                  onChanged: (value) {
+                    labelsText = value;
+                    modified = true;
+                  },
+                ),
+                SizedBox(height: 10),
+                //BOTON APLICAR
+                OutlinedButton(
+                    onPressed: () {
+                      setState(() {
+                        _applyLabels(context);
+                      });
+                    },
+                    child: Text("Aplicar"))
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _applyLabels(BuildContext context) {
+    copy.labels = labelsText
+        .split(",")
+        .map((e) => e.trim().toLowerCase())
+        .where((e) => e.isNotEmpty)
+        .toList();
+    modified = true;
+    Navigator.of(context).pop();
   }
 }

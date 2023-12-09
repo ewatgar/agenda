@@ -15,15 +15,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AgendaData agenda = AgendaData.fromJson(agendaJson);
     ThemeData theme = ThemeData.dark(useMaterial3: false);
 
     return ChangeNotifierProvider<AgendaData>(
-      create: (_) => agenda,
+      create: (_) => AgendaData.fromJson(agendaJson),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Agenda',
         theme: theme.copyWith(
+            outlinedButtonTheme: OutlinedButtonThemeData(
+              style: OutlinedButton.styleFrom(
+                  foregroundColor: theme.indicatorColor,
+                  side: BorderSide(color: theme.indicatorColor, width: 1.5),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20))),
+            ),
             listTileTheme: const ListTileThemeData(
               iconColor: Colors.white,
             ),

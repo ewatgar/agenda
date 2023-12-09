@@ -79,4 +79,8 @@ class AgendaData extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void notifyChanges() {
+    this.notifyListeners();
+  }
 }

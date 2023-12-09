@@ -28,7 +28,8 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    DateFormat format = DateFormat("MMM dd, yyyy");
+    //DateFormat format = DateFormat("MMM dd, yyyy");
+    DateFormat format = DateFormat.yMMMd();
     String strLabels = copy.labels
             ?.map((e) => e[0].toUpperCase() + e.substring(1))
             .reduce((value, element) => value += ", $element") ??

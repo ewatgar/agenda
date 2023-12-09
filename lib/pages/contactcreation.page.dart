@@ -2,6 +2,7 @@
 
 import 'package:agenda/models/agenda.data.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ContactCreationPage extends StatefulWidget {
@@ -13,12 +14,18 @@ class ContactCreationPage extends StatefulWidget {
 
 class _ContactCreationPageState extends State<ContactCreationPage> {
   late TextEditingController contactNameController;
+  late TextEditingController contactBirthdateController;
+
+  late DateTime birthdate;
+  DateFormat dateFormat = DateFormat.yMMMd();
 
   @override
   void initState() {
     super.initState();
-    AgendaData agenda = Provider.of<AgendaData>(context);
+    birthdate = DateTime.now();
     contactNameController = TextEditingController();
+    contactBirthdateController =
+        TextEditingController(text: dateFormat.format(birthdate));
   }
 
   @override
@@ -46,6 +53,22 @@ class _ContactCreationPageState extends State<ContactCreationPage> {
               decoration: InputDecoration(labelText: "Email"),
             ),
             TextFormField(
+              controller: contactBirthdateController,
+              readOnly: true,
+              onTap: () async {
+                DateTime? newDate = await showDatePicker(
+                  context: context,
+                  initialDate: birthdate,
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime.now(),
+                );
+
+                if (newDate != null) {
+                  birthdate = newDate;
+                  contactBirthdateController.text =
+                      dateFormat.format(birthdate);
+                }
+              },
               decoration: InputDecoration(labelText: "Fecha de nacimiento"),
             ),
           ],

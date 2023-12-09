@@ -66,8 +66,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                       padding: const EdgeInsets.all(15),
                       child: CircleAvatar(
                         radius: 100,
-                        child:
-                            LabelIcon(labels: widget.contact.labels, size: 100),
+                        child: LabelIcon(labels: copy.labels, size: 100),
                       ),
                     ),
                     Padding(

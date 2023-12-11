@@ -47,17 +47,7 @@ class _ContactCreationPageState extends State<ContactCreationPage> {
         actions: [
           IconButton(
               onPressed: () {
-                ContactData newContact = ContactData(
-                    id: agenda.contacts.last.id++,
-                    name: contactNameController.text,
-                    surname: contactSurnameController.text,
-                    phone: contactPhoneController.text,
-                    email: contactEmailController.text,
-                    birthdate: birthdate,
-                    creation: DateTime.now());
-                agenda.contacts.add(newContact);
-                agenda.notifyChanges();
-                Navigator.of(context).pop<bool>(true);
+                _onCreateContact(agenda, context);
               },
               icon: Icon(Icons.check))
         ],
@@ -104,5 +94,19 @@ class _ContactCreationPageState extends State<ContactCreationPage> {
         ),
       )),
     );
+  }
+
+  void _onCreateContact(AgendaData agenda, BuildContext context) {
+    ContactData newContact = ContactData(
+        id: agenda.contacts.last.id++,
+        name: contactNameController.text,
+        surname: contactSurnameController.text,
+        phone: contactPhoneController.text,
+        email: contactEmailController.text,
+        birthdate: birthdate,
+        creation: DateTime.now());
+    agenda.contacts.add(newContact);
+    agenda.notifyChanges();
+    Navigator.of(context).pop<bool>(true);
   }
 }

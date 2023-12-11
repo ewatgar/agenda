@@ -29,7 +29,8 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    DateFormat format = DateFormat.yMMMd();
+    DateFormat birthdateFormat = DateFormat.yMMMd();
+    DateFormat creatModifFormat = DateFormat('yyyy-MM-dd HH:mm');
     String strLabels = (copy.labels ?? []).isNotEmpty
         ? copy.labels!
             .map((e) => e[0].toUpperCase() + e.substring(1))
@@ -101,7 +102,8 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                           style: theme.textTheme.titleMedium),
                       subtitle: Text(
                           widget.contact.birthdate != null
-                              ? format.format(widget.contact.birthdate!)
+                              ? birthdateFormat
+                                  .format(widget.contact.birthdate!)
                               : "n/a",
                           style: theme.textTheme.headlineSmall),
                     ),
@@ -120,14 +122,15 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                           Text(strLabels, style: theme.textTheme.headlineSmall),
                     ),
                     Divider(thickness: 2),
-                    //TODO: falta arreglar formato hora de creation y modification
-                    Center(
-                        child: Text("Añadido en ${widget.contact.creation}")),
+                    if (widget.contact.creation != null)
+                      Center(
+                          child: Text(
+                              "Añadido en ${creatModifFormat.format(widget.contact.creation!)}")),
                     SizedBox(height: 5),
                     if (widget.contact.modification != null)
                       Center(
                           child: Text(
-                              "Editado en ${widget.contact.modification}")),
+                              "Editado en ${creatModifFormat.format(widget.contact.modification!)}")),
                   ],
                 ));
           }),

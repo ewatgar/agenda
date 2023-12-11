@@ -3,6 +3,7 @@
 import 'package:agenda/models/agenda.data.dart';
 import 'package:agenda/models/contact.data.dart';
 import 'package:agenda/pages/contactdetails.page.dart';
+import 'package:agenda/pages/contactedit.page.dart';
 import 'package:agenda/widgets/labelicon.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +38,7 @@ class ContactTile extends StatelessWidget {
             if (value == 1) {
               _navigateToContactDetails(context, contact, agenda);
             } else if (value == 2) {
-              print("Editar ${contact.name}");
+              _navigateToContactEdit(context, contact, agenda);
             } else if (value == 3) {
               _showDialogDeleteContact(context, theme, agenda);
             }
@@ -93,6 +94,13 @@ class ContactTile extends StatelessWidget {
       BuildContext context, ContactData contact, AgendaData agenda) async {
     await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => ContactDetailsPage(contact: contact)));
+    agenda.notifyChanges();
+  }
+
+  Future<void> _navigateToContactEdit(
+      BuildContext context, ContactData contact, AgendaData agenda) async {
+    await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => ContactEditPage(contact: contact)));
     agenda.notifyChanges();
   }
 }

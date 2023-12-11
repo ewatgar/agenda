@@ -6,14 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class ContactCreationPage extends StatefulWidget {
-  const ContactCreationPage({super.key});
+class ContactEditPage extends StatefulWidget {
+  const ContactEditPage({super.key, required this.contact});
+
+  final ContactData contact;
 
   @override
-  State<ContactCreationPage> createState() => _ContactCreationPageState();
+  State<ContactEditPage> createState() => _ContactEditPageState();
 }
 
-class _ContactCreationPageState extends State<ContactCreationPage> {
+class _ContactEditPageState extends State<ContactEditPage> {
+  late ContactData copy;
   late TextEditingController contactNameController;
   late TextEditingController contactSurnameController;
   late TextEditingController contactPhoneController;
@@ -27,23 +30,14 @@ class _ContactCreationPageState extends State<ContactCreationPage> {
   @override
   void initState() {
     super.initState();
-    birthdate = null;
-    contactNameController = TextEditingController();
-    contactSurnameController = TextEditingController();
-    contactPhoneController = TextEditingController();
-    contactEmailController = TextEditingController();
+    copy = widget.contact.copyWith();
+    birthdate = copy.birthdate;
+    contactNameController = TextEditingController(text: copy.name);
+    contactSurnameController = TextEditingController(text: copy.surname);
+    contactPhoneController = TextEditingController(text: copy.phone);
+    contactEmailController = TextEditingController(text: copy.email);
     contactBirthdateController = TextEditingController(
         text: birthdate != null ? dateFormat.format(birthdate!) : null);
-  }
-
-  @override
-  void dispose() {
-    contactNameController.dispose();
-    contactSurnameController.dispose();
-    contactPhoneController.dispose();
-    contactEmailController.dispose();
-    contactBirthdateController.dispose();
-    super.dispose();
   }
 
   @override
@@ -56,7 +50,14 @@ class _ContactCreationPageState extends State<ContactCreationPage> {
         actions: [
           IconButton(
               onPressed: () {
-                _onCreateContact(agenda, context);
+                widget.contact.name = contactNameController.text;
+                widget.contact.surname = contactSurnameController.text;
+                widget.contact.email = contactEmailController.text;
+                widget.contact.phone = contactPhoneController.text;
+                widget.contact.birthdate = birthdate;
+                widget.contact.modification = DateTime.now();
+                agenda.notifyChanges();
+                Navigator.of(context).pop<bool>(true);
               },
               icon: Icon(Icons.check))
         ],
@@ -105,6 +106,7 @@ class _ContactCreationPageState extends State<ContactCreationPage> {
     );
   }
 
+/*
   void _onCreateContact(AgendaData agenda, BuildContext context) {
     ContactData newContact = ContactData(
         id: agenda.contacts.last.id++,
@@ -117,5 +119,5 @@ class _ContactCreationPageState extends State<ContactCreationPage> {
     agenda.contacts.add(newContact);
     agenda.notifyChanges();
     Navigator.of(context).pop<bool>(true);
-  }
+  }*/
 }

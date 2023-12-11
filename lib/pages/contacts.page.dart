@@ -133,8 +133,7 @@ class _ContactsPageState extends State<ContactsPage> {
           backgroundColor: const Color.fromARGB(255, 70, 70, 70),
           foregroundColor: theme.indicatorColor,
           onPressed: () {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => ContactCreationPage()));
+            _navigateToContactCreation(context);
           },
           child: Icon(Icons.add),
         ),
@@ -146,6 +145,11 @@ class _ContactsPageState extends State<ContactsPage> {
         ]),
       ),
     );
+  }
+
+  void _navigateToContactCreation(BuildContext context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => ContactCreationPage()));
   }
 
   List<String> _currentLabelsList(AgendaData agenda) {

@@ -22,7 +22,16 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Agenda',
+        //CONFIG ESTILO APP
         theme: theme.copyWith(
+            textSelectionTheme:
+                TextSelectionThemeData(cursorColor: theme.indicatorColor),
+            inputDecorationTheme: InputDecorationTheme(
+                enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white)),
+                floatingLabelStyle: TextStyle(color: theme.indicatorColor),
+                focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: theme.indicatorColor))),
             outlinedButtonTheme: OutlinedButtonThemeData(
               style: OutlinedButton.styleFrom(
                   foregroundColor: theme.indicatorColor,
@@ -30,10 +39,10 @@ class MyApp extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20))),
             ),
-            listTileTheme: const ListTileThemeData(
+            listTileTheme: ListTileThemeData(
               iconColor: Colors.white,
             ),
-            appBarTheme: AppBarTheme(color: const Color.fromARGB(0, 0, 0, 0)),
+            appBarTheme: AppBarTheme(color: Colors.transparent),
             colorScheme: ColorScheme.fromSeed(
                 seedColor: Colors.teal, background: Colors.black)),
         home: ContactsPage(),

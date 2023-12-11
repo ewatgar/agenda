@@ -120,12 +120,14 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                           Text(strLabels, style: theme.textTheme.headlineSmall),
                     ),
                     Divider(thickness: 2),
+                    //TODO: falta arreglar formato hora de creation y modification
                     Center(
                         child: Text("Añadido en ${widget.contact.creation}")),
                     SizedBox(height: 5),
-                    Center(
-                        child:
-                            Text("Editado en ${widget.contact.modification}")),
+                    if (widget.contact.modification != null)
+                      Center(
+                          child: Text(
+                              "Editado en ${widget.contact.modification}")),
                   ],
                 ));
           }),
@@ -161,9 +163,6 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
               children: [
                 //TEXTFORMFIELD LABELS
                 TextFormField(
-                  decoration: InputDecoration(
-                      enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white))),
                   initialValue: strLabels,
                   onChanged: (value) {
                     labelsText = value;

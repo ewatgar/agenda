@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, curly_braces_in_flow_control_structures
 
 import 'package:agenda/models/agenda.data.dart';
 import 'package:agenda/models/contact.data.dart';
@@ -64,7 +64,13 @@ class _ContactEditPageState extends State<ContactEditPage> {
                 //check si vacio o no ha habido cambios (al salir)
 
                 //sacar mayor valor id
-                widget.contact.id = -1;
+                if (widget.isNew)
+                  widget.contact.id = agenda.contacts.fold<int>(0, (ac, e) {
+                        if (e.id > ac) ac = e.id;
+                        return ac;
+                      }) +
+                      1;
+                print(widget.contact.id);
 
                 widget.contact.name = contactNameController.text;
                 widget.contact.surname = contactSurnameController.text;

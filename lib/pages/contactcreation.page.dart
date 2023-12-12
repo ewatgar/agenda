@@ -69,6 +69,7 @@ class _ContactCreationPageState extends State<ContactCreationPage> {
             TextFormField(
               decoration: InputDecoration(labelText: "Nombre"),
               controller: contactNameController,
+              onChanged: (value) {},
             ),
             TextFormField(
               decoration: InputDecoration(labelText: "Apellidos"),

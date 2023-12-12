@@ -97,20 +97,31 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                             style: theme.textTheme.headlineSmall),
                         trailing: Icon(Icons.phone)),
                     Divider(thickness: 2),
-                    ListTile(
-                      title: Text("Nacimiento",
-                          style: theme.textTheme.titleMedium),
-                      subtitle: Text(
-                          widget.contact.birthdate != null
-                              ? birthdateFormat
-                                  .format(widget.contact.birthdate!)
-                              : "n/a",
-                          style: theme.textTheme.headlineSmall),
-                    ),
+
                     //TODO: falta edad
-                    /*Row(
-                      children: [ListTile(title: Text("a")), Text("b")],
-                    )*/
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: ListTile(
+                            title: Text("Nacimiento",
+                                style: theme.textTheme.titleMedium),
+                            subtitle: Text(
+                                widget.contact.birthdate != null
+                                    ? birthdateFormat
+                                        .format(widget.contact.birthdate!)
+                                    : "n/a",
+                                style: theme.textTheme.headlineSmall),
+                          ),
+                        ),
+                        Expanded(
+                            flex: 2,
+                            child: ListTile(
+                              title: Text("Edad"),
+                              subtitle: Text(),
+                            ))
+                      ],
+                    ),
                     Divider(thickness: 2),
                     ListTile(
                       onTap: () {

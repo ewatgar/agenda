@@ -116,7 +116,7 @@ class _ContactCreationPageState extends State<ContactCreationPage> {
         birthdate: birthdate,
         creation: DateTime.now());
     agenda.contacts.add(newContact);
-    agenda.notifyChanges();
+    //agenda.notifyChanges();
     Navigator.of(context).pop<bool>(true);
   }
 }

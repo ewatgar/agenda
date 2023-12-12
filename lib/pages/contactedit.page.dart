@@ -7,9 +7,10 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ContactEditPage extends StatefulWidget {
-  const ContactEditPage({super.key, required this.contact});
+  const ContactEditPage({super.key, required this.contact, this.isNew = false});
 
   final ContactData contact;
+  final bool isNew;
 
   @override
   State<ContactEditPage> createState() => _ContactEditPageState();
@@ -41,22 +42,43 @@ class _ContactEditPageState extends State<ContactEditPage> {
   }
 
   @override
+  void dispose() {
+    contactNameController.dispose();
+    contactSurnameController.dispose();
+    contactPhoneController.dispose();
+    contactEmailController.dispose();
+    contactBirthdateController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     AgendaData agenda = Provider.of<AgendaData>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Nuevo contacto"),
+        title: widget.isNew ? Text("Nuevo contacto") : Text("Editar contacto"),
         actions: [
           IconButton(
               onPressed: () {
+                //check si vacio o no ha habido cambios (al salir)
+
+                //sacar mayor valor id
+                widget.contact.id = -1;
+
                 widget.contact.name = contactNameController.text;
                 widget.contact.surname = contactSurnameController.text;
                 widget.contact.email = contactEmailController.text;
                 widget.contact.phone = contactPhoneController.text;
                 widget.contact.birthdate = birthdate;
-                widget.contact.modification = DateTime.now();
-                agenda.notifyChanges();
+                widget.isNew
+                    ? widget.contact.creation = DateTime.now()
+                    : widget.contact.modification = DateTime.now();
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: widget.isNew
+                      ? Text("Contacto creado con éxito")
+                      : Text("Contacto editado"),
+                ));
                 Navigator.of(context).pop<bool>(true);
               },
               icon: Icon(Icons.check))
@@ -105,19 +127,4 @@ class _ContactEditPageState extends State<ContactEditPage> {
       )),
     );
   }
-
-/*
-  void _onCreateContact(AgendaData agenda, BuildContext context) {
-    ContactData newContact = ContactData(
-        id: agenda.contacts.last.id++,
-        name: contactNameController.text,
-        surname: contactSurnameController.text,
-        phone: contactPhoneController.text,
-        email: contactEmailController.text,
-        birthdate: birthdate,
-        creation: DateTime.now());
-    agenda.contacts.add(newContact);
-    agenda.notifyChanges();
-    Navigator.of(context).pop<bool>(true);
-  }*/
 }

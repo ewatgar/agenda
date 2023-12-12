@@ -4,7 +4,7 @@ import 'package:agenda/models/agenda.data.dart';
 import 'package:agenda/models/contact.data.dart';
 import 'package:agenda/models/diacriticsCaseAwareCompareTo.fun.dart';
 import 'package:agenda/models/label.enum.dart';
-import 'package:agenda/pages/contactcreation.page.dart';
+import 'package:agenda/pages/contactedit.page.dart';
 import 'package:agenda/widgets/backgroundgradient.widget.dart';
 import 'package:agenda/widgets/contacttile.widget.dart';
 import 'package:flutter/material.dart';
@@ -50,18 +50,20 @@ class _ContactsPageState extends State<ContactsPage> {
 
                   return [
                     ...currentLabels.map((label) => PopupMenuItem(child:
-                            StatefulBuilder(builder: (context, setState) {
+                            StatefulBuilder(builder: (context, setState2) {
                           return SwitchListTile(
                               activeColor: theme.indicatorColor,
                               title: Text(label),
                               onChanged: (value) {
                                 setState(() {
-                                  agenda.filterLabels
-                                          .contains(label.toLowerCase())
-                                      ? agenda.filterLabels
-                                          .remove(label.toLowerCase())
-                                      : agenda.filterLabels
-                                          .add(label.toLowerCase());
+                                  setState2(() {
+                                    agenda.filterLabels
+                                            .contains(label.toLowerCase())
+                                        ? agenda.filterLabels
+                                            .remove(label.toLowerCase())
+                                        : agenda.filterLabels
+                                            .add(label.toLowerCase());
+                                  });
                                 });
                               },
                               value: !agenda.filterLabels
@@ -133,7 +135,7 @@ class _ContactsPageState extends State<ContactsPage> {
           backgroundColor: const Color.fromARGB(255, 70, 70, 70),
           foregroundColor: theme.indicatorColor,
           onPressed: () {
-            _navigateToContactCreation(context);
+            _navigateToContactCreation(context, agenda);
           },
           child: Icon(Icons.add),
         ),
@@ -147,9 +149,14 @@ class _ContactsPageState extends State<ContactsPage> {
     );
   }
 
-  void _navigateToContactCreation(BuildContext context) {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => ContactCreationPage()));
+  Future<void> _navigateToContactCreation(
+      BuildContext context, AgendaData agenda) async {
+    //id -1, todavía no está creado
+    ContactData emptyContact = ContactData(id: -1);
+    await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) =>
+            ContactEditPage(contact: emptyContact, isNew: true)));
+    agenda.notifyChanges();
   }
 
   List<String> _currentLabelsList(AgendaData agenda) {

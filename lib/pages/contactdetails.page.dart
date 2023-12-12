@@ -118,7 +118,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                             flex: 2,
                             child: ListTile(
                               title: Text("Edad"),
-                              subtitle: Text(),
+                              //subtitle: Text(),
                             ))
                       ],
                     ),

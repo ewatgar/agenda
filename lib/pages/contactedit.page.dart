@@ -116,12 +116,8 @@ class _ContactEditPageState extends State<ContactEditPage> {
     );
   }
 
-  Future<bool> _leavePageAsk(BuildContext context, ContactData contact) {
-    if (contact.equals(other)) {
-      widget.contact.isFavorite = copy.isFavorite;
-      widget.contact.labels = copy.labels;
-      widget.contact.modification = DateTime.now();
-    }
+  Future<bool> _leavePageAsk(BuildContext context) {
+    if (!widget.contact.equals(copy)) {}
     Navigator.pop(context);
     return Future.value(true);
   }

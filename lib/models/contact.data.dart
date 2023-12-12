@@ -117,4 +117,11 @@ class ContactData extends ChangeNotifier {
       isFavorite: copyFrom.isFavorite,
     );
   }
+
+  //METODOS misc --------------------------------------------------------------
+  bool equals(ContactData other) {
+    ContactData copyOther = other.copyWith(
+        creation: this.creation, modification: this.modification);
+    return this == copyOther;
+  }
 }

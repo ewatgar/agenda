@@ -55,82 +55,100 @@ class _ContactEditPageState extends State<ContactEditPage> {
   Widget build(BuildContext context) {
     AgendaData agenda = Provider.of<AgendaData>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: widget.isNew ? Text("Nuevo contacto") : Text("Editar contacto"),
-        actions: [
-          IconButton(
-              onPressed: () {
-                //check si vacio o no ha habido cambios (al salir)
-
-                //sacar mayor valor id
-                if (widget.isNew)
-                  widget.contact.id = agenda.contacts.fold<int>(0, (ac, e) {
-                        if (e.id > ac) ac = e.id;
-                        return ac;
-                      }) +
-                      1;
-                print(widget.contact.id);
-
-                widget.contact.name = contactNameController.text;
-                widget.contact.surname = contactSurnameController.text;
-                widget.contact.email = contactEmailController.text;
-                widget.contact.phone = contactPhoneController.text;
-                widget.contact.birthdate = birthdate;
-                widget.isNew
-                    ? widget.contact.creation = DateTime.now()
-                    : widget.contact.modification = DateTime.now();
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: widget.isNew
-                      ? Text("Contacto creado con éxito")
-                      : Text("Contacto editado"),
-                ));
-                Navigator.of(context).pop<bool>(true);
-              },
-              icon: Icon(Icons.check))
-        ],
-      ),
-      body: Form(
-          child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            TextFormField(
-              decoration: InputDecoration(labelText: "Nombre"),
-              controller: contactNameController,
-            ),
-            TextFormField(
-              decoration: InputDecoration(labelText: "Apellidos"),
-              controller: contactSurnameController,
-            ),
-            TextFormField(
-              decoration: InputDecoration(labelText: "Teléfono"),
-              controller: contactPhoneController,
-            ),
-            TextFormField(
-              decoration: InputDecoration(labelText: "Email"),
-              controller: contactEmailController,
-            ),
-            TextFormField(
-              decoration: InputDecoration(labelText: "Fecha de nacimiento"),
-              controller: contactBirthdateController,
-              readOnly: true,
-              onTap: () async {
-                DateTime? dateSelected = await showDatePicker(
-                    context: context,
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime.now());
-
-                if (dateSelected != null) {
-                  birthdate = dateSelected;
-                  contactBirthdateController.text =
-                      dateFormat.format(birthdate ?? DateTime.now());
-                }
-              },
-            ),
+    return WillPopScope(
+      onWillPop: () {
+        return _leavePageAsk(context, widget.contact);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title:
+              widget.isNew ? Text("Nuevo contacto") : Text("Editar contacto"),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  _onSaveChanges(agenda, context);
+                },
+                icon: Icon(Icons.check))
           ],
         ),
-      )),
+        body: Form(
+            child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              TextFormField(
+                decoration: InputDecoration(labelText: "Nombre"),
+                controller: contactNameController,
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: "Apellidos"),
+                controller: contactSurnameController,
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: "Teléfono"),
+                controller: contactPhoneController,
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: "Email"),
+                controller: contactEmailController,
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: "Fecha de nacimiento"),
+                controller: contactBirthdateController,
+                readOnly: true,
+                onTap: () async {
+                  DateTime? dateSelected = await showDatePicker(
+                      context: context,
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now());
+
+                  if (dateSelected != null) {
+                    birthdate = dateSelected;
+                    contactBirthdateController.text =
+                        dateFormat.format(birthdate ?? DateTime.now());
+                  }
+                },
+              ),
+            ],
+          ),
+        )),
+      ),
     );
+  }
+
+  Future<bool> _leavePageAsk(BuildContext context, ContactData contact) {
+    if (contact.equals(other)) {
+      widget.contact.isFavorite = copy.isFavorite;
+      widget.contact.labels = copy.labels;
+      widget.contact.modification = DateTime.now();
+    }
+    Navigator.pop(context);
+    return Future.value(true);
+  }
+
+  void _onSaveChanges(AgendaData agenda, BuildContext context) {
+    //check si vacio o no ha habido cambios (al salir)
+
+    //sacar mayor valor id
+    if (widget.isNew)
+      widget.contact.id = agenda.contacts.fold<int>(0, (ac, e) {
+            if (e.id > ac) ac = e.id;
+            return ac;
+          }) +
+          1;
+    widget.contact.name = contactNameController.text;
+    widget.contact.surname = contactSurnameController.text;
+    widget.contact.email = contactEmailController.text;
+    widget.contact.phone = contactPhoneController.text;
+    widget.contact.birthdate = birthdate;
+    widget.isNew
+        ? widget.contact.creation = DateTime.now()
+        : widget.contact.modification = DateTime.now();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: widget.isNew
+          ? Text("Contacto creado con éxito")
+          : Text("Contacto editado"),
+    ));
+    Navigator.of(context).pop<bool>(true);
   }
 }

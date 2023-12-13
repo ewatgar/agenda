@@ -1,10 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:agenda/models/agenda.data.dart';
 import 'package:agenda/models/contact.data.dart';
 import 'package:agenda/models/funciones.dart';
 import 'package:agenda/widgets/labelicon.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class ContactDetailsPage extends StatefulWidget {
   const ContactDetailsPage({super.key, required this.contact});
@@ -29,6 +31,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    AgendaData agenda = Provider.of<AgendaData>(context);
     ThemeData theme = Theme.of(context);
     DateFormat birthdateFormat = DateFormat.yMMMd();
     DateFormat creatModifFormat = DateFormat('yyyy-MM-dd HH:mm');
@@ -50,7 +53,12 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                 appBar: AppBar(
                   actions: [
                     //BOTON EDITAR
-                    IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+                    IconButton(
+                        onPressed: () {
+                          navigateToContactEdit(
+                              context, widget.contact, agenda);
+                        },
+                        icon: Icon(Icons.edit)),
                     //BOTON FAVORITO
                     IconButton(
                         onPressed: () {

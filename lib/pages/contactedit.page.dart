@@ -28,7 +28,7 @@ class _ContactEditPageState extends State<ContactEditPage> {
   late DateTime? birthdate;
   DateFormat dateFormat = DateFormat.yMMMd();
 
-  late bool canSave;
+  late bool newChanges;
 
   @override
   void initState() {
@@ -41,7 +41,7 @@ class _ContactEditPageState extends State<ContactEditPage> {
     contactEmailController = TextEditingController(text: copy.email);
     contactBirthdateController = TextEditingController(
         text: birthdate != null ? dateFormat.format(birthdate!) : null);
-    canSave = false;
+    newChanges = false;
   }
 
   @override
@@ -60,7 +60,6 @@ class _ContactEditPageState extends State<ContactEditPage> {
 
     return WillPopScope(
       onWillPop: () {
-        //check si vacio o no ha habido cambios (al salir)
         return _leavePageAsk(context);
       },
       child: Scaffold(
@@ -70,9 +69,11 @@ class _ContactEditPageState extends State<ContactEditPage> {
           actions: [
             IconButton(
                 onPressed: () {
-                  _onSaveChanges(agenda, context);
+                  if (newChanges) {
+                    _onSaveChanges(agenda, context);
+                  }
                 },
-                icon: canSave
+                icon: newChanges
                     ? Icon(Icons.check)
                     : Icon(Icons.check, color: Colors.white.withAlpha(70)))
           ],
@@ -88,21 +89,48 @@ class _ContactEditPageState extends State<ContactEditPage> {
                     controller: contactNameController,
                     onChanged: (value) {
                       setState(() {
-                        value != copy.name ? canSave = true : canSave = false;
+                        widget.isNew
+                            ? newChanges = contactNameController.text != ''
+                            : newChanges =
+                                contactNameController.text != copy.name;
                       });
                     },
                   ),
                   TextFormField(
                     decoration: InputDecoration(labelText: "Apellidos"),
                     controller: contactSurnameController,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.isNew
+                            ? newChanges = contactSurnameController.text != ''
+                            : newChanges =
+                                contactSurnameController.text != copy.surname;
+                      });
+                    },
                   ),
                   TextFormField(
                     decoration: InputDecoration(labelText: "Teléfono"),
                     controller: contactPhoneController,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.isNew
+                            ? newChanges = contactPhoneController.text != ''
+                            : newChanges =
+                                contactPhoneController.text != copy.phone;
+                      });
+                    },
                   ),
                   TextFormField(
                     decoration: InputDecoration(labelText: "Email"),
                     controller: contactEmailController,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.isNew
+                            ? newChanges = contactEmailController.text != ''
+                            : newChanges =
+                                contactEmailController.text != copy.email;
+                      });
+                    },
                   ),
                   TextFormField(
                     decoration:
@@ -116,9 +144,15 @@ class _ContactEditPageState extends State<ContactEditPage> {
                           lastDate: DateTime.now());
 
                       if (dateSelected != null) {
-                        birthdate = dateSelected;
-                        contactBirthdateController.text =
-                            dateFormat.format(birthdate ?? DateTime.now());
+                        setState(() {
+                          birthdate = dateSelected;
+                          contactBirthdateController.text =
+                              dateFormat.format(birthdate ?? DateTime.now());
+
+                          newChanges = birthdate != copy.birthdate;
+                        });
+                      } else {
+                        newChanges = false;
                       }
                     },
                   ),
@@ -130,37 +164,16 @@ class _ContactEditPageState extends State<ContactEditPage> {
   }
 
   Future<bool> _leavePageAsk(BuildContext context) {
-    //TODO check si vacio o no ha habido cambios (al salir)
-    if (!widget.contact.equals(copy)) {}
-    Navigator.pop(context);
+    if (newChanges) {
+    } else {
+      Navigator.pop(context);
+    }
     return Future.value(true);
   }
 
   void _onSaveChanges(AgendaData agenda, BuildContext context) {
-    //TODO check si vacio o no ha habido cambios (al guardar)
-    if (widget.isNew)
-      copy.id = agenda.contacts.fold<int>(0, (ac, e) {
-            if (e.id > ac) ac = e.id;
-            return ac;
-          }) +
-          1;
-    copy.name =
-        contactNameController.text.isEmpty ? null : contactNameController.text;
-    copy.surname = contactSurnameController.text.isEmpty
-        ? null
-        : contactSurnameController.text;
-    copy.email = contactEmailController.text.isEmpty
-        ? null
-        : contactEmailController.text;
-    copy.phone = contactPhoneController.text.isEmpty
-        ? null
-        : contactPhoneController.text;
-    copy.birthdate = birthdate;
-    widget.isNew
-        ? copy.creation = DateTime.now()
-        : copy.modification = DateTime.now();
-
-    if (!(copy.equals(widget.contact) || copy.isEmpty())) {
+    if (newChanges) {
+      _saveContactInfo(agenda);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: widget.isNew
             ? Text("Contacto creado con éxito")
@@ -168,5 +181,30 @@ class _ContactEditPageState extends State<ContactEditPage> {
       ));
     }
     Navigator.of(context).pop<bool>(true);
+  }
+
+  void _saveContactInfo(AgendaData agenda) {
+    if (widget.isNew) {
+      copy.id = agenda.contacts.fold<int>(0, (ac, e) {
+            if (e.id > ac) ac = e.id;
+            return ac;
+          }) +
+          1;
+    }
+    widget.contact.name =
+        contactNameController.text.isEmpty ? null : contactNameController.text;
+    widget.contact.surname = contactSurnameController.text.isEmpty
+        ? null
+        : contactSurnameController.text;
+    widget.contact.email = contactEmailController.text.isEmpty
+        ? null
+        : contactEmailController.text;
+    widget.contact.phone = contactPhoneController.text.isEmpty
+        ? null
+        : contactPhoneController.text;
+    widget.contact.birthdate = birthdate;
+    widget.isNew
+        ? widget.contact.creation = DateTime.now()
+        : widget.contact.modification = DateTime.now();
   }
 }

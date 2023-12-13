@@ -24,10 +24,10 @@ Future<void> navigateToContactEdit(
 
 Future<void> navigateToContactCreation(
     BuildContext context, AgendaData agenda) async {
-  ContactData emptyContact = ContactData();
+  ContactData newContact = ContactData();
   await Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) =>
-          ContactEditPage(contact: emptyContact, isNew: true)));
+      builder: (context) => ContactEditPage(contact: newContact, isNew: true)));
+  agenda.contacts.add(newContact);
   agenda.notifyChanges();
 }
 

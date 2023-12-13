@@ -201,6 +201,5 @@ class _ContactEditPageState extends State<ContactEditPage> {
     widget.isNew
         ? widget.contact.creation = DateTime.now()
         : widget.contact.modification = DateTime.now();
-    agenda.notifyChanges();
   }
 }

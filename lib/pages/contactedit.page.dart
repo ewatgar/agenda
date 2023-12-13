@@ -23,10 +23,12 @@ class _ContactEditPageState extends State<ContactEditPage> {
   late TextEditingController contactPhoneController;
   late TextEditingController contactEmailController;
   late TextEditingController contactBirthdateController;
-  //final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   late DateTime? birthdate;
   DateFormat dateFormat = DateFormat.yMMMd();
+
+  late bool canSave;
 
   @override
   void initState() {
@@ -39,6 +41,7 @@ class _ContactEditPageState extends State<ContactEditPage> {
     contactEmailController = TextEditingController(text: copy.email);
     contactBirthdateController = TextEditingController(
         text: birthdate != null ? dateFormat.format(birthdate!) : null);
+    canSave = false;
   }
 
   @override
@@ -69,50 +72,57 @@ class _ContactEditPageState extends State<ContactEditPage> {
                 onPressed: () {
                   _onSaveChanges(agenda, context);
                 },
-                icon: Icon(Icons.check))
+                icon: canSave
+                    ? Icon(Icons.check)
+                    : Icon(Icons.check, color: Colors.white.withAlpha(70)))
           ],
         ),
         body: Form(
+            key: _formKey,
             child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              TextFormField(
-                decoration: InputDecoration(labelText: "Nombre"),
-                controller: contactNameController,
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: "Apellidos"),
-                controller: contactSurnameController,
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: "Teléfono"),
-                controller: contactPhoneController,
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: "Email"),
-                controller: contactEmailController,
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: "Fecha de nacimiento"),
-                controller: contactBirthdateController,
-                readOnly: true,
-                onTap: () async {
-                  DateTime? dateSelected = await showDatePicker(
-                      context: context,
-                      firstDate: DateTime(1900),
-                      lastDate: DateTime.now());
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  TextFormField(
+                    decoration: InputDecoration(labelText: "Nombre"),
+                    controller: contactNameController,
+                    onChanged: (value) {
+                      if (value != copy.name) canSave == true;
+                    },
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(labelText: "Apellidos"),
+                    controller: contactSurnameController,
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(labelText: "Teléfono"),
+                    controller: contactPhoneController,
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(labelText: "Email"),
+                    controller: contactEmailController,
+                  ),
+                  TextFormField(
+                    decoration:
+                        InputDecoration(labelText: "Fecha de nacimiento"),
+                    controller: contactBirthdateController,
+                    readOnly: true,
+                    onTap: () async {
+                      DateTime? dateSelected = await showDatePicker(
+                          context: context,
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now());
 
-                  if (dateSelected != null) {
-                    birthdate = dateSelected;
-                    contactBirthdateController.text =
-                        dateFormat.format(birthdate ?? DateTime.now());
-                  }
-                },
+                      if (dateSelected != null) {
+                        birthdate = dateSelected;
+                        contactBirthdateController.text =
+                            dateFormat.format(birthdate ?? DateTime.now());
+                      }
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
-        )),
+            )),
       ),
     );
   }
@@ -155,10 +165,7 @@ class _ContactEditPageState extends State<ContactEditPage> {
     print(widget.contact);
     print(copy.equals(widget.contact));*/
 
-    if (copy.equals(widget.contact) || copy.isEmpty()) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Sin cambios")));
-    } else {
+    if (!(copy.equals(widget.contact) || copy.isEmpty())) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: widget.isNew
             ? Text("Contacto creado con éxito")

@@ -121,13 +121,18 @@ class ContactData extends ChangeNotifier {
   //METODOS misc --------------------------------------------------------------
 
   bool equals(ContactData other) {
+    /*
     ContactData copyOther =
         other.copyWith(id: id, creation: creation, modification: modification);
     print(this);
-    print(copyOther);
+    print(copyOther);*/
 
-    //TODO FIX: OVERRIDE == HASHCODE o equatable package
-    return identical(this, copyOther);
+    //No funciona == directamente
+    return (name == other.name) &&
+        (surname == other.surname) &&
+        (phone == other.phone) &&
+        (email == other.email) &&
+        (birthdate == other.birthdate);
   }
 
   bool isEmpty() {

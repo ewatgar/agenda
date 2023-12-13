@@ -87,7 +87,9 @@ class _ContactEditPageState extends State<ContactEditPage> {
                     decoration: InputDecoration(labelText: "Nombre"),
                     controller: contactNameController,
                     onChanged: (value) {
-                      if (value != copy.name) canSave == true;
+                      setState(() {
+                        value != copy.name ? canSave = true : canSave = false;
+                      });
                     },
                   ),
                   TextFormField(
@@ -157,13 +159,6 @@ class _ContactEditPageState extends State<ContactEditPage> {
     widget.isNew
         ? copy.creation = DateTime.now()
         : copy.modification = DateTime.now();
-
-    ContactData empty = ContactData();
-    /*
-    print(copy);
-    print(empty);
-    print(widget.contact);
-    print(copy.equals(widget.contact));*/
 
     if (!(copy.equals(widget.contact) || copy.isEmpty())) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

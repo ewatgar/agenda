@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:age_calculator/age_calculator.dart';
 import 'package:agenda/models/agenda.data.dart';
 import 'package:agenda/models/contact.data.dart';
 import 'package:agenda/models/funciones.dart';
@@ -33,13 +34,14 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
   Widget build(BuildContext context) {
     AgendaData agenda = Provider.of<AgendaData>(context);
     ThemeData theme = Theme.of(context);
+    String defaultStr = "No asignado";
     DateFormat birthdateFormat = DateFormat.yMMMd();
     DateFormat creatModifFormat = DateFormat('yyyy-MM-dd HH:mm');
     String strLabels = (copy.labels ?? []).isNotEmpty
         ? copy.labels!
             .map((e) => e[0].toUpperCase() + e.substring(1))
             .join(", ")
-        : "n/a";
+        : defaultStr;
 
     return WillPopScope(
       onWillPop: () async {
@@ -84,7 +86,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                       padding: const EdgeInsets.all(8),
                       child: Center(
                         child: Text(
-                          "${widget.contact.name} ${widget.contact.surname}",
+                          "${widget.contact.name ?? ''} ${widget.contact.surname ?? ''}",
                           style: TextStyle(
                               color: Colors.white,
                               fontSize:
@@ -96,14 +98,14 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                     ListTile(
                         title: Text("Correo electrónico",
                             style: theme.textTheme.titleMedium),
-                        subtitle: Text(widget.contact.email ?? "n/a",
+                        subtitle: Text(widget.contact.email ?? defaultStr,
                             style: theme.textTheme.headlineSmall),
                         trailing: Icon(Icons.email)),
                     Divider(thickness: 2),
                     ListTile(
                         title: Text("Teléfono",
                             style: theme.textTheme.titleMedium),
-                        subtitle: Text(widget.contact.phone ?? "n/a",
+                        subtitle: Text(widget.contact.phone ?? defaultStr,
                             style: theme.textTheme.headlineSmall),
                         trailing: Icon(Icons.phone)),
                     Divider(thickness: 2),
@@ -120,7 +122,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                                 widget.contact.birthdate != null
                                     ? birthdateFormat
                                         .format(widget.contact.birthdate!)
-                                    : "n/a",
+                                    : defaultStr,
                                 style: theme.textTheme.headlineSmall),
                           ),
                         ),
@@ -128,7 +130,14 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                             flex: 2,
                             child: ListTile(
                               title: Text("Edad"),
-                              //subtitle: Text(),
+                              subtitle: Text(
+                                  widget.contact.birthdate != null
+                                      ? AgeCalculator.age(
+                                              widget.contact.birthdate!)
+                                          .years
+                                          .toString()
+                                      : defaultStr,
+                                  style: theme.textTheme.headlineSmall),
                             ))
                       ],
                     ),

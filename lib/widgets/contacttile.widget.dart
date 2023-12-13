@@ -25,7 +25,7 @@ class ContactTile extends StatelessWidget {
         leading: LabelIcon(labels: contact.labels),
         title: Wrap(
           children: [
-            Text("${contact.name} ${contact.surname}"),
+            Text("${contact.name ?? ''} ${contact.surname ?? ''}"),
             if (contact.isFavorite) Icon(Icons.star, size: 15)
           ],
         ),

@@ -109,8 +109,6 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                             style: theme.textTheme.headlineSmall),
                         trailing: Icon(Icons.phone)),
                     Divider(thickness: 2),
-
-                    //TODO: falta edad
                     Row(
                       children: [
                         Expanded(

@@ -128,6 +128,7 @@ class _ContactEditPageState extends State<ContactEditPage> {
                   TextFormField(
                     decoration: InputDecoration(labelText: "Email"),
                     controller: contactEmailController,
+                    validator: _onValidateContactEmail,
                     onChanged: (value) {
                       setState(() {
                         widget.isNew
@@ -169,13 +170,15 @@ class _ContactEditPageState extends State<ContactEditPage> {
   }
 
   void _onSaveChanges(AgendaData agenda, BuildContext context) {
-    _saveContactInfo(agenda);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: widget.isNew
-          ? Text("Contacto creado con éxito")
-          : Text("Contacto editado con éxito"),
-    ));
-    Navigator.of(context).pop<bool>(true);
+    if (_formKey.currentState!.validate()) {
+      _saveContactInfo(agenda);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: widget.isNew
+            ? Text("Contacto creado con éxito")
+            : Text("Contacto editado con éxito"),
+      ));
+      Navigator.of(context).pop<bool>(true);
+    }
   }
 
   void _saveContactInfo(AgendaData agenda) {
@@ -201,5 +204,16 @@ class _ContactEditPageState extends State<ContactEditPage> {
     widget.isNew
         ? widget.contact.creation = DateTime.now()
         : widget.contact.modification = DateTime.now();
+  }
+
+  String? _onValidateContactEmail(String? value) {
+    RegExp exp = RegExp(
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+
+    if (value == null || value.trim().isEmpty || exp.hasMatch(value)) {
+      return null;
+    } else {
+      return "Formato de email incorrecto";
+    }
   }
 }

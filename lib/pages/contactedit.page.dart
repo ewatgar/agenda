@@ -57,7 +57,8 @@ class _ContactEditPageState extends State<ContactEditPage> {
 
     return WillPopScope(
       onWillPop: () {
-        return _leavePageAsk(context, widget.contact);
+        //check si vacio o no ha habido cambios (al salir)
+        return _leavePageAsk(context);
       },
       child: Scaffold(
         appBar: AppBar(
@@ -117,34 +118,53 @@ class _ContactEditPageState extends State<ContactEditPage> {
   }
 
   Future<bool> _leavePageAsk(BuildContext context) {
+    //TODO check si vacio o no ha habido cambios (al salir)
     if (!widget.contact.equals(copy)) {}
     Navigator.pop(context);
     return Future.value(true);
   }
 
   void _onSaveChanges(AgendaData agenda, BuildContext context) {
-    //check si vacio o no ha habido cambios (al salir)
-
-    //sacar mayor valor id
+    //TODO check si vacio o no ha habido cambios (al guardar)
     if (widget.isNew)
-      widget.contact.id = agenda.contacts.fold<int>(0, (ac, e) {
+      copy.id = agenda.contacts.fold<int>(0, (ac, e) {
             if (e.id > ac) ac = e.id;
             return ac;
           }) +
           1;
-    widget.contact.name = contactNameController.text;
-    widget.contact.surname = contactSurnameController.text;
-    widget.contact.email = contactEmailController.text;
-    widget.contact.phone = contactPhoneController.text;
-    widget.contact.birthdate = birthdate;
+    copy.name =
+        contactNameController.text.isEmpty ? null : contactNameController.text;
+    copy.surname = contactSurnameController.text.isEmpty
+        ? null
+        : contactSurnameController.text;
+    copy.email = contactEmailController.text.isEmpty
+        ? null
+        : contactEmailController.text;
+    copy.phone = contactPhoneController.text.isEmpty
+        ? null
+        : contactPhoneController.text;
+    copy.birthdate = birthdate;
     widget.isNew
-        ? widget.contact.creation = DateTime.now()
-        : widget.contact.modification = DateTime.now();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: widget.isNew
-          ? Text("Contacto creado con éxito")
-          : Text("Contacto editado"),
-    ));
+        ? copy.creation = DateTime.now()
+        : copy.modification = DateTime.now();
+
+    ContactData empty = ContactData();
+    /*
+    print(copy);
+    print(empty);
+    print(widget.contact);
+    print(copy.equals(widget.contact));*/
+
+    if (copy.equals(widget.contact) || copy.isEmpty()) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Sin cambios")));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: widget.isNew
+            ? Text("Contacto creado con éxito")
+            : Text("Contacto editado con éxito"),
+      ));
+    }
     Navigator.of(context).pop<bool>(true);
   }
 }

@@ -151,8 +151,7 @@ class _ContactsPageState extends State<ContactsPage> {
 
   Future<void> _navigateToContactCreation(
       BuildContext context, AgendaData agenda) async {
-    //id -1, todavía no está creado
-    ContactData emptyContact = ContactData(id: -1);
+    ContactData emptyContact = ContactData();
     await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) =>
             ContactEditPage(contact: emptyContact, isNew: true)));

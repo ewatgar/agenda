@@ -15,7 +15,7 @@ class ContactData extends ChangeNotifier {
 
   //CONSTRUCTORES--------------------------------------------------------------
   ContactData({
-    required this.id,
+    this.id = -1,
     this.name,
     this.surname,
     this.email,
@@ -119,9 +119,18 @@ class ContactData extends ChangeNotifier {
   }
 
   //METODOS misc --------------------------------------------------------------
+
   bool equals(ContactData other) {
-    ContactData copyOther = other.copyWith(
-        creation: this.creation, modification: this.modification);
-    return this == copyOther;
+    ContactData copyOther =
+        other.copyWith(id: id, creation: creation, modification: modification);
+    print(this);
+    print(copyOther);
+
+    //TODO FIX: OVERRIDE == HASHCODE o equatable package
+    return identical(this, copyOther);
+  }
+
+  bool isEmpty() {
+    return equals(ContactData());
   }
 }

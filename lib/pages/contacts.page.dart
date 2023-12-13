@@ -2,9 +2,7 @@
 
 import 'package:agenda/models/agenda.data.dart';
 import 'package:agenda/models/contact.data.dart';
-import 'package:agenda/models/diacriticsCaseAwareCompareTo.fun.dart';
-import 'package:agenda/models/label.enum.dart';
-import 'package:agenda/pages/contactedit.page.dart';
+import 'package:agenda/models/funciones.dart';
 import 'package:agenda/widgets/backgroundgradient.widget.dart';
 import 'package:agenda/widgets/contacttile.widget.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +44,7 @@ class _ContactsPageState extends State<ContactsPage> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5)),
                 itemBuilder: (context) {
-                  List<String> currentLabels = _currentLabelsList(agenda);
+                  List<String> currentLabels = currentLabelsList(agenda);
 
                   return [
                     ...currentLabels.map((label) => PopupMenuItem(child:
@@ -95,8 +93,7 @@ class _ContactsPageState extends State<ContactsPage> {
             child: ListenableBuilder(
                 listenable: agenda,
                 builder: (context, child) {
-                  List<ContactData> contactsFilter =
-                      _contactsListFilter(agenda);
+                  List<ContactData> contactsFilter = contactsListFilter(agenda);
 
                   return ListView.builder(
                       itemCount: contactsFilter.length,
@@ -113,8 +110,7 @@ class _ContactsPageState extends State<ContactsPage> {
             child: ListenableBuilder(
                 listenable: agenda,
                 builder: (context, child) {
-                  List<ContactData> contactsFilter =
-                      _contactsListFilter(agenda);
+                  List<ContactData> contactsFilter = contactsListFilter(agenda);
 
                   List<ContactData> listContactsFav = contactsFilter
                       .where((e) => e.isFavorite == true)
@@ -135,7 +131,7 @@ class _ContactsPageState extends State<ContactsPage> {
           backgroundColor: const Color.fromARGB(255, 70, 70, 70),
           foregroundColor: theme.indicatorColor,
           onPressed: () {
-            _navigateToContactCreation(context, agenda);
+            navigateToContactCreation(context, agenda);
           },
           child: Icon(Icons.add),
         ),
@@ -147,35 +143,5 @@ class _ContactsPageState extends State<ContactsPage> {
         ]),
       ),
     );
-  }
-
-  Future<void> _navigateToContactCreation(
-      BuildContext context, AgendaData agenda) async {
-    ContactData emptyContact = ContactData();
-    await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            ContactEditPage(contact: emptyContact, isNew: true)));
-    agenda.notifyChanges();
-  }
-
-  List<String> _currentLabelsList(AgendaData agenda) {
-    List<String> currentLabels = agenda.contacts
-        .fold<List<String>>([], (ac, e) => [...ac, ...(e.labels ?? [])])
-        .map((e) => e[0].toUpperCase() + e.substring(1))
-        .toSet()
-        .toList()
-      ..sort((a, b) => diacriticsCaseAwareCompareTo(a, b));
-    return currentLabels;
-  }
-
-  List<ContactData> _contactsListFilter(AgendaData agenda) {
-    List<ContactData> contactsFilter = agenda.contacts.where((e) {
-      List<String> labelPriorityList = (e.labels ?? [])
-        ..sort((a, b) => Label.parse(a).compareTo(Label.parse(b)));
-      String firstLabel =
-          labelPriorityList.isNotEmpty ? labelPriorityList[0] : 'noLabels';
-      return !agenda.filterLabels.contains(firstLabel);
-    }).toList();
-    return contactsFilter;
   }
 }

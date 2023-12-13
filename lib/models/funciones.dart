@@ -1,0 +1,127 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:agenda/models/agenda.data.dart';
+import 'package:agenda/models/contact.data.dart';
+import 'package:agenda/models/diacriticsCaseAwareCompareTo.fun.dart';
+import 'package:agenda/models/label.enum.dart';
+import 'package:agenda/pages/contactdetails.page.dart';
+import 'package:agenda/pages/contactedit.page.dart';
+import 'package:flutter/material.dart';
+
+Future<void> navigateToContactDetails(
+    BuildContext context, ContactData contact, AgendaData agenda) async {
+  await Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => ContactDetailsPage(contact: contact)));
+  agenda.notifyChanges();
+}
+
+Future<void> navigateToContactEdit(
+    BuildContext context, ContactData contact, AgendaData agenda) async {
+  await Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => ContactEditPage(contact: contact)));
+  agenda.notifyChanges();
+}
+
+Future<void> navigateToContactCreation(
+    BuildContext context, AgendaData agenda) async {
+  ContactData emptyContact = ContactData();
+  await Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) =>
+          ContactEditPage(contact: emptyContact, isNew: true)));
+  agenda.notifyChanges();
+}
+
+Future<dynamic> showDialogDeleteContact(BuildContext context, ThemeData theme,
+    AgendaData agenda, ContactData contact) {
+  return showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Text(
+        "Atención",
+        style: theme.textTheme.headlineSmall,
+      ),
+      content: Text("Estás a punto de borrar un contacto, ¿Estás seguro?"),
+      actionsAlignment: MainAxisAlignment.center,
+      actions: [
+        OutlinedButton(
+            onPressed: () {
+              agenda.dropContact(id: contact.id);
+              Navigator.of(context).pop();
+            },
+            child: Text("Aceptar")),
+        OutlinedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text("Cancelar"))
+      ],
+    ),
+  );
+}
+
+Future<bool?> leavePageSave(BuildContext context, ContactData contact,
+    ContactData copy, bool modified) async {
+  if (modified) {
+    contact.isFavorite = copy.isFavorite;
+    contact.labels = copy.labels;
+    contact.modification = DateTime.now();
+    Navigator.of(context).pop(false);
+    return false;
+  }
+  Navigator.of(context).pop(true);
+  return true;
+}
+
+void applyLabels(
+    BuildContext context, String labelsText, ContactData copy, bool modified) {
+  copy.labels = labelsText
+      .split(",")
+      .map((e) => e.trim().toLowerCase())
+      .where((e) => e.isNotEmpty)
+      .toList();
+  modified = true;
+  Navigator.of(context).pop();
+}
+
+List<String> currentLabelsList(AgendaData agenda) {
+  List<String> currentLabels = agenda.contacts
+      .fold<List<String>>([], (ac, e) => [...ac, ...(e.labels ?? [])])
+      .map((e) => e[0].toUpperCase() + e.substring(1))
+      .toSet()
+      .toList()
+    ..sort((a, b) => diacriticsCaseAwareCompareTo(a, b));
+  return currentLabels;
+}
+
+List<ContactData> contactsListFilter(AgendaData agenda) {
+  List<ContactData> contactsFilter = agenda.contacts.where((e) {
+    List<String> labelPriorityList = (e.labels ?? [])
+      ..sort((a, b) => Label.parse(a).compareTo(Label.parse(b)));
+    String firstLabel =
+        labelPriorityList.isNotEmpty ? labelPriorityList[0] : 'noLabels';
+    return !agenda.filterLabels.contains(firstLabel);
+  }).toList();
+  return contactsFilter;
+}
+
+Future<bool?> leavePageAsk(BuildContext context) async {
+  return await showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+        title: Text("Atención"),
+        content: Text("¿Seguro que deseas salir? Los cambios no se guardarán"),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          OutlinedButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+                Navigator.of(context).pop(false);
+              },
+              child: Text("Aceptar")),
+          OutlinedButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: Text("Cancelar")),
+        ]),
+  );
+}

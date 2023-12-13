@@ -2,6 +2,7 @@
 
 import 'package:agenda/models/agenda.data.dart';
 import 'package:agenda/models/contact.data.dart';
+import 'package:agenda/models/funciones.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -61,7 +62,7 @@ class _ContactEditPageState extends State<ContactEditPage> {
     return WillPopScope(
       onWillPop: () async {
         if (newChanges) {
-          return await _leavePageAsk(context) ?? false;
+          return await leavePageAsk(context) ?? false;
         }
         Navigator.of(context).pop(false);
         return false;
@@ -164,30 +165,6 @@ class _ContactEditPageState extends State<ContactEditPage> {
               ),
             )),
       ),
-    );
-  }
-
-  Future<bool?> _leavePageAsk(BuildContext context) async {
-    return await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-          title: Text("Atención"),
-          content:
-              Text("¿Seguro que deseas salir? Los cambios no se guardarán"),
-          actionsAlignment: MainAxisAlignment.center,
-          actions: [
-            OutlinedButton(
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                  Navigator.of(context).pop(false);
-                },
-                child: Text("Aceptar")),
-            OutlinedButton(
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: Text("Cancelar")),
-          ]),
     );
   }
 

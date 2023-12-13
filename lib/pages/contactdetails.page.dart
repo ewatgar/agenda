@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:agenda/models/contact.data.dart';
+import 'package:agenda/models/funciones.dart';
 import 'package:agenda/widgets/labelicon.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -39,7 +40,8 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
 
     return WillPopScope(
       onWillPop: () async {
-        return await _leavePageSave(context) ?? false;
+        return await leavePageSave(context, widget.contact, copy, modified) ??
+            false;
       },
       child: ListenableBuilder(
           listenable: widget.contact,
@@ -125,7 +127,8 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                     Divider(thickness: 2),
                     ListTile(
                       onTap: () {
-                        _showModalBottomSheetLabels(context, strLabels);
+                        showModalBottomSheetLabels(
+                            context, strLabels, labelsText, modified, copy);
                       },
                       title:
                           Text("Etiquetas", style: theme.textTheme.titleMedium),
@@ -148,20 +151,8 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
     );
   }
 
-  Future<bool?> _leavePageSave(BuildContext context) async {
-    if (modified) {
-      widget.contact.isFavorite = copy.isFavorite;
-      widget.contact.labels = copy.labels;
-      widget.contact.modification = DateTime.now();
-      Navigator.of(context).pop(false);
-      return false;
-    }
-    Navigator.of(context).pop(true);
-    return true;
-  }
-
-  Future<dynamic> _showModalBottomSheetLabels(
-      BuildContext context, String strLabels) {
+  Future<dynamic> showModalBottomSheetLabels(BuildContext context,
+      String strLabels, String labelsText, bool modified, ContactData copy) {
     return showModalBottomSheet(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -190,7 +181,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                 OutlinedButton(
                     onPressed: () {
                       setState(() {
-                        _applyLabels(context);
+                        applyLabels(context, labelsText, copy, modified);
                       });
                     },
                     child: Text("Aplicar"))
@@ -200,15 +191,5 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
         );
       },
     );
-  }
-
-  void _applyLabels(BuildContext context) {
-    copy.labels = labelsText
-        .split(",")
-        .map((e) => e.trim().toLowerCase())
-        .where((e) => e.isNotEmpty)
-        .toList();
-    modified = true;
-    Navigator.of(context).pop();
   }
 }

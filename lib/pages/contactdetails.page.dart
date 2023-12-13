@@ -38,8 +38,8 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
         : "n/a";
 
     return WillPopScope(
-      onWillPop: () {
-        return _leavePageSave(context);
+      onWillPop: () async {
+        return await _leavePageSave(context) ?? false;
       },
       child: ListenableBuilder(
           listenable: widget.contact,
@@ -148,14 +148,16 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
     );
   }
 
-  Future<bool> _leavePageSave(BuildContext context) {
+  Future<bool?> _leavePageSave(BuildContext context) async {
     if (modified) {
       widget.contact.isFavorite = copy.isFavorite;
       widget.contact.labels = copy.labels;
       widget.contact.modification = DateTime.now();
+      Navigator.of(context).pop(false);
+      return false;
     }
-    Navigator.pop(context);
-    return Future.value(true);
+    Navigator.of(context).pop(true);
+    return true;
   }
 
   Future<dynamic> _showModalBottomSheetLabels(

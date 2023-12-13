@@ -59,8 +59,12 @@ class _ContactEditPageState extends State<ContactEditPage> {
     AgendaData agenda = Provider.of<AgendaData>(context);
 
     return WillPopScope(
-      onWillPop: () {
-        return _leavePageAsk(context);
+      onWillPop: () async {
+        if (newChanges) {
+          return await _leavePageAsk(context) ?? false;
+        }
+        Navigator.of(context).pop(false);
+        return false;
       },
       child: Scaffold(
         appBar: AppBar(
@@ -163,29 +167,43 @@ class _ContactEditPageState extends State<ContactEditPage> {
     );
   }
 
-  Future<bool> _leavePageAsk(BuildContext context) {
-    if (newChanges) {
-    } else {
-      Navigator.pop(context);
-    }
-    return Future.value(true);
+  Future<bool?> _leavePageAsk(BuildContext context) async {
+    return await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+          title: Text("Atención"),
+          content:
+              Text("¿Seguro que deseas salir? Los cambios no se guardarán"),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            OutlinedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                  Navigator.of(context).pop(false);
+                },
+                child: Text("Aceptar")),
+            OutlinedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: Text("Cancelar")),
+          ]),
+    );
   }
 
   void _onSaveChanges(AgendaData agenda, BuildContext context) {
-    if (newChanges) {
-      _saveContactInfo(agenda);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: widget.isNew
-            ? Text("Contacto creado con éxito")
-            : Text("Contacto editado con éxito"),
-      ));
-    }
+    _saveContactInfo(agenda);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: widget.isNew
+          ? Text("Contacto creado con éxito")
+          : Text("Contacto editado con éxito"),
+    ));
     Navigator.of(context).pop<bool>(true);
   }
 
   void _saveContactInfo(AgendaData agenda) {
     if (widget.isNew) {
-      copy.id = agenda.contacts.fold<int>(0, (ac, e) {
+      widget.contact.id = agenda.contacts.fold<int>(0, (ac, e) {
             if (e.id > ac) ac = e.id;
             return ac;
           }) +
@@ -206,5 +224,6 @@ class _ContactEditPageState extends State<ContactEditPage> {
     widget.isNew
         ? widget.contact.creation = DateTime.now()
         : widget.contact.modification = DateTime.now();
+    agenda.notifyChanges();
   }
 }

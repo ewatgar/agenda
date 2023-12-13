@@ -21,13 +21,14 @@ class ContactDetailsPage extends StatefulWidget {
 class _ContactDetailsPageState extends State<ContactDetailsPage> {
   late ContactData copy;
   late String labelsText;
-  bool modified = false;
+  late bool modified;
 
   @override
   void initState() {
     super.initState();
     copy = widget.contact.copyWith();
     labelsText = "";
+    modified = false;
   }
 
   @override
@@ -41,12 +42,11 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
         ? copy.labels!
             .map((e) => e[0].toUpperCase() + e.substring(1))
             .join(", ")
-        : defaultStr;
+        : "n/a";
 
     return WillPopScope(
       onWillPop: () async {
-        return await leavePageSave(context, widget.contact, copy, modified) ??
-            false;
+        return await _leavePageSave(context) ?? false;
       },
       child: ListenableBuilder(
           listenable: widget.contact,
@@ -142,8 +142,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                     Divider(thickness: 2),
                     ListTile(
                       onTap: () {
-                        showModalBottomSheetLabels(
-                            context, strLabels, labelsText, modified, copy);
+                        _showModalBottomSheetLabels(context, strLabels);
                       },
                       title:
                           Text("Etiquetas", style: theme.textTheme.titleMedium),
@@ -166,8 +165,8 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
     );
   }
 
-  Future<dynamic> showModalBottomSheetLabels(BuildContext context,
-      String strLabels, String labelsText, bool modified, ContactData copy) {
+  Future<dynamic> _showModalBottomSheetLabels(
+      BuildContext context, String strLabels) {
     return showModalBottomSheet(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -196,7 +195,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                 OutlinedButton(
                     onPressed: () {
                       setState(() {
-                        applyLabels(context, labelsText, copy, modified);
+                        _applyLabels(context);
                       });
                     },
                     child: Text("Aplicar"))
@@ -206,5 +205,27 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
         );
       },
     );
+  }
+
+  void _applyLabels(BuildContext context) {
+    copy.labels = labelsText
+        .split(",")
+        .map((e) => e.trim().toLowerCase())
+        .where((e) => e.isNotEmpty)
+        .toList();
+    modified = true;
+    Navigator.of(context).pop();
+  }
+
+  Future<bool?> _leavePageSave(BuildContext context) async {
+    if (modified) {
+      widget.contact.isFavorite = copy.isFavorite;
+      widget.contact.labels = copy.labels;
+      widget.contact.modification = DateTime.now();
+      Navigator.of(context).pop(false);
+      return false;
+    }
+    Navigator.of(context).pop(true);
+    return true;
   }
 }

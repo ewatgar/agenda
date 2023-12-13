@@ -71,38 +71,6 @@ Future<bool?> leavePageSave(BuildContext context, ContactData contact,
   return true;
 }
 
-void applyLabels(
-    BuildContext context, String labelsText, ContactData copy, bool modified) {
-  copy.labels = labelsText
-      .split(",")
-      .map((e) => e.trim().toLowerCase())
-      .where((e) => e.isNotEmpty)
-      .toList();
-  modified = true;
-  Navigator.of(context).pop();
-}
-
-List<String> currentLabelsList(AgendaData agenda) {
-  List<String> currentLabels = agenda.contacts
-      .fold<List<String>>([], (ac, e) => [...ac, ...(e.labels ?? [])])
-      .map((e) => e[0].toUpperCase() + e.substring(1))
-      .toSet()
-      .toList()
-    ..sort((a, b) => diacriticsCaseAwareCompareTo(a, b));
-  return currentLabels;
-}
-
-List<ContactData> contactsListFilter(AgendaData agenda) {
-  List<ContactData> contactsFilter = agenda.contacts.where((e) {
-    List<String> labelPriorityList = (e.labels ?? [])
-      ..sort((a, b) => Label.parse(a).compareTo(Label.parse(b)));
-    String firstLabel =
-        labelPriorityList.isNotEmpty ? labelPriorityList[0] : 'noLabels';
-    return !agenda.filterLabels.contains(firstLabel);
-  }).toList();
-  return contactsFilter;
-}
-
 Future<bool?> leavePageAsk(BuildContext context) async {
   return await showDialog(
     context: context,
@@ -116,12 +84,12 @@ Future<bool?> leavePageAsk(BuildContext context) async {
                 Navigator.of(context).pop(false);
                 Navigator.of(context).pop(false);
               },
-              child: Text("Aceptar")),
+              child: Text("Sí")),
           OutlinedButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              child: Text("Cancelar")),
+              child: Text("No")),
         ]),
   );
 }

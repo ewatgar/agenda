@@ -12,6 +12,7 @@ Map<String, dynamic> agendaJson = {
       "isFavorite": true,
       "labels": ["familia", "trabajo"]
     },
+    /*
     {
       "id": 2,
       "name": "Ana",
@@ -239,6 +240,6 @@ Map<String, dynamic> agendaJson = {
       "modification": "2023-01-22",
       "isFavorite": false,
       "labels": ["amistad"]
-    }
+    }*/
   ]
 };

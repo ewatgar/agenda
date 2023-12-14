@@ -25,9 +25,9 @@ Future<void> navigateToContactEdit(
 Future<void> navigateToContactCreation(
     BuildContext context, AgendaData agenda) async {
   ContactData newContact = ContactData();
-  await Navigator.of(context).push(MaterialPageRoute(
+  bool reply = await Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => ContactEditPage(contact: newContact, isNew: true)));
-  agenda.contacts.add(newContact);
+  if (reply) agenda.contacts.add(newContact);
   agenda.notifyChanges();
 }
 
@@ -64,11 +64,11 @@ Future<bool?> leavePageSave(BuildContext context, ContactData contact,
     contact.isFavorite = copy.isFavorite;
     contact.labels = copy.labels;
     contact.modification = DateTime.now();
-    Navigator.of(context).pop(false);
-    return false;
+    Navigator.of(context).pop(true);
+    return true;
   }
-  Navigator.of(context).pop(true);
-  return true;
+  Navigator.of(context).pop(false);
+  return false;
 }
 
 Future<bool?> leavePageAsk(BuildContext context) async {

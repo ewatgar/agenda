@@ -42,7 +42,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
         ? copy.labels!
             .map((e) => e[0].toUpperCase() + e.substring(1))
             .join(", ")
-        : "n/a";
+        : defaultStr;
 
     return WillPopScope(
       onWillPop: () async {

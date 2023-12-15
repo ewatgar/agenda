@@ -1,5 +1,8 @@
 // ignore_for_file: avoid_print
 
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:agenda/models/contact.data.dart';
 import 'package:agenda/models/diacriticsCaseAwareCompareTo.fun.dart';
 import 'package:flutter/material.dart';
@@ -71,7 +74,7 @@ class AgendaData extends ChangeNotifier {
     notifyListeners();
   }
 
-  //METODOS MISC ----------------------------------------------------------
+  //METODOS MISC -------------------------------------------------------------
   void dropContact({required int id}) {
     bool exists = contacts.any((e) => e.id == id);
     if (exists) {
@@ -82,5 +85,22 @@ class AgendaData extends ChangeNotifier {
 
   void notifyChanges() {
     this.notifyListeners();
+  }
+
+  //METODOS CREAR/OBTENER JSON ------------------------------------------------
+
+  static String generateJson(AgendaData agenda) {
+    return jsonEncode(agenda.toJson());
+  }
+
+  static Future<AgendaData?> loadJson({required String path}) async {
+    try {
+      String filePath = await File(path).readAsString();
+      Map<String, dynamic> agendaDataJson = jsonDecode(filePath);
+      return AgendaData.fromJson(agendaDataJson);
+    } on Exception catch (e) {
+      print(e);
+      return null;
+    }
   }
 }

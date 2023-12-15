@@ -2,8 +2,6 @@
 
 import 'package:agenda/models/agenda.data.dart';
 import 'package:agenda/models/contact.data.dart';
-import 'package:agenda/models/diacriticsCaseAwareCompareTo.fun.dart';
-import 'package:agenda/models/label.enum.dart';
 import 'package:agenda/pages/contactdetails.page.dart';
 import 'package:agenda/pages/contactedit.page.dart';
 import 'package:flutter/material.dart';

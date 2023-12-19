@@ -42,7 +42,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
         ? copy.labels!
             .map((e) => e[0].toUpperCase() + e.substring(1))
             .join(", ")
-        : defaultStr;
+        : "";
 
     return WillPopScope(
       onWillPop: () async {
@@ -146,8 +146,9 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                       },
                       title:
                           Text("Etiquetas", style: theme.textTheme.titleMedium),
-                      subtitle:
-                          Text(strLabels, style: theme.textTheme.headlineSmall),
+                      subtitle: Text(
+                          strLabels.isEmpty ? "No asignado" : strLabels,
+                          style: theme.textTheme.headlineSmall),
                     ),
                     Divider(thickness: 2),
                     if (widget.contact.creation != null)

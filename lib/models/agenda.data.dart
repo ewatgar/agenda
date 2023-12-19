@@ -2,9 +2,8 @@
 
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:agenda/models/contact.data.dart';
-import 'package:agenda/models/diacriticsCaseAwareCompareTo.fun.dart';
+import 'package:agenda/models/funciones.dart';
 import 'package:flutter/material.dart';
 
 class AgendaData extends ChangeNotifier {
@@ -14,8 +13,9 @@ class AgendaData extends ChangeNotifier {
   List<String> filterLabels;
 
   //CONSTRUCTORES--------------------------------------------------------------
-  AgendaData({this.contacts = const []})
-      : isSortedAZ = false,
+  AgendaData({List<ContactData>? contacts})
+      : contacts = contacts ?? [],
+        isSortedAZ = false,
         filterLabels = [];
 
   factory AgendaData.fromJson(Map<String, dynamic> json) {

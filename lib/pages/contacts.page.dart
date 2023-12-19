@@ -2,7 +2,6 @@
 
 import 'package:agenda/models/agenda.data.dart';
 import 'package:agenda/models/contact.data.dart';
-import 'package:agenda/models/diacriticsCaseAwareCompareTo.fun.dart';
 import 'package:agenda/models/funciones.dart';
 import 'package:agenda/models/label.enum.dart';
 import 'package:agenda/widgets/backgroundgradient.widget.dart';
@@ -19,10 +18,6 @@ class ContactsPage extends StatefulWidget {
 }
 
 class _ContactsPageState extends State<ContactsPage> {
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     AgendaData agenda = Provider.of<AgendaData>(context);
@@ -76,15 +71,17 @@ class _ContactsPageState extends State<ContactsPage> {
                                   .contains(label.toLowerCase()));
                         }))),
                     PopupMenuItem(
-                        child: StatefulBuilder(builder: (context, setState) {
+                        child: StatefulBuilder(builder: (context, setState2) {
                       return SwitchListTile(
                           activeColor: theme.indicatorColor,
                           title: Text("No etiquetados"),
                           onChanged: (value) {
                             setState(() {
-                              agenda.filterLabels.contains("noLabels")
-                                  ? agenda.filterLabels.remove("noLabels")
-                                  : agenda.filterLabels.add("noLabels");
+                              setState2(() {
+                                agenda.filterLabels.contains("noLabels")
+                                    ? agenda.filterLabels.remove("noLabels")
+                                    : agenda.filterLabels.add("noLabels");
+                              });
                             });
                           },
                           value: !agenda.filterLabels.contains("noLabels"));
@@ -93,87 +90,110 @@ class _ContactsPageState extends State<ContactsPage> {
                 })
           ],
         ),
-        body: TabBarView(children: <Widget>[
-          //TAB LISTA CONTACTOS
-          BackgroundGradient(
-            primary: theme.colorScheme.primary,
-            background: theme.colorScheme.background.withAlpha(100),
-            child: ListenableBuilder(
-                listenable: agenda,
-                builder: (context, child) {
-                  List<ContactData> contactsFilter =
-                      _contactsListFilter(agenda);
+        body: agenda.contacts.isEmpty
+            ? Center(
+                child: Wrap(
+                  spacing: 20,
+                  direction: Axis.vertical,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Icon(Icons.account_box_rounded, size: 100),
+                    Text(
+                      "Agenda vacía",
+                      style: TextStyle(fontSize: 35),
+                    ),
+                    Text(
+                      "Toca \"+\" para añadir un contacto",
+                      style: TextStyle(fontSize: 20),
+                    )
+                  ],
+                ),
+              )
+            : TabBarView(children: <Widget>[
+                //TAB LISTA CONTACTOS
+                BackgroundGradient(
+                  primary: theme.colorScheme.primary,
+                  background: theme.colorScheme.background.withAlpha(100),
+                  child: ListenableBuilder(
+                      listenable: agenda,
+                      builder: (context, child) {
+                        List<ContactData> contactsFilter =
+                            _contactsListFilter(agenda);
 
-                  return contactsFilter.isEmpty
-                      ? Center(
-                          child: Wrap(
-                            spacing: 20,
-                            direction: Axis.vertical,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              Icon(Icons.account_box_rounded, size: 100),
-                              Text(
-                                "Agenda vacía",
-                                style: TextStyle(fontSize: 35),
-                              ),
-                              Text(
-                                "Toca \"+\" para añadir un contacto",
-                                style: TextStyle(fontSize: 20),
+                        return contactsFilter.isEmpty
+                            ? Center(
+                                child: Wrap(
+                                  spacing: 20,
+                                  direction: Axis.vertical,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    Icon(Icons.account_box_rounded, size: 100),
+                                    Text(
+                                      "Agenda vacía",
+                                      style: TextStyle(fontSize: 35),
+                                    ),
+                                    Text(
+                                      "Toca \"+\" para añadir un contacto",
+                                      style: TextStyle(fontSize: 20),
+                                    )
+                                  ],
+                                ),
                               )
-                            ],
-                          ),
-                        )
-                      : ListView.builder(
-                          itemCount: contactsFilter.length,
-                          itemBuilder: (context, index) => ListenableBuilder(
-                              listenable: contactsFilter[index],
-                              builder: (context, child) =>
-                                  ContactTile(contact: contactsFilter[index])));
-                }),
-          ),
-          //TAB LISTA FAVORITOS
-          BackgroundGradient(
-            primary: theme.colorScheme.primary,
-            background: theme.colorScheme.background.withAlpha(100),
-            child: ListenableBuilder(
-                listenable: agenda,
-                builder: (context, child) {
-                  List<ContactData> contactsFilter =
-                      _contactsListFilter(agenda);
+                            : ListView.builder(
+                                itemCount: contactsFilter.length,
+                                itemBuilder: (context, index) =>
+                                    ListenableBuilder(
+                                        listenable: contactsFilter[index],
+                                        builder: (context, child) =>
+                                            ContactTile(
+                                                contact:
+                                                    contactsFilter[index])));
+                      }),
+                ),
+                //TAB LISTA FAVORITOS
+                BackgroundGradient(
+                  primary: theme.colorScheme.primary,
+                  background: theme.colorScheme.background.withAlpha(100),
+                  child: ListenableBuilder(
+                      listenable: agenda,
+                      builder: (context, child) {
+                        List<ContactData> contactsFilter =
+                            _contactsListFilter(agenda);
 
-                  List<ContactData> listContactsFav = contactsFilter
-                      .where((e) => e.isFavorite == true)
-                      .toList();
+                        List<ContactData> listContactsFav = contactsFilter
+                            .where((e) => e.isFavorite == true)
+                            .toList();
 
-                  return listContactsFav.isEmpty
-                      ? Center(
-                          child: Wrap(
-                            spacing: 20,
-                            direction: Axis.vertical,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              Icon(Icons.star, size: 100),
-                              Text(
-                                "Sin favoritos",
-                                style: TextStyle(fontSize: 35),
-                              ),
-                              Text(
-                                "Aquí saldrán tus contactos favoritos",
-                                style: TextStyle(fontSize: 20),
+                        return listContactsFav.isEmpty
+                            ? Center(
+                                child: Wrap(
+                                  spacing: 20,
+                                  direction: Axis.vertical,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    Icon(Icons.star, size: 100),
+                                    Text(
+                                      "Sin favoritos",
+                                      style: TextStyle(fontSize: 35),
+                                    ),
+                                    Text(
+                                      "Aquí saldrán tus contactos favoritos",
+                                      style: TextStyle(fontSize: 20),
+                                    )
+                                  ],
+                                ),
                               )
-                            ],
-                          ),
-                        )
-                      : ListView.builder(
-                          itemCount: listContactsFav.length,
-                          itemBuilder: (context, index) {
-                            ContactData contactFav = listContactsFav[index];
-                            return ContactTile(contact: contactFav);
-                          },
-                        );
-                }),
-          )
-        ]),
+                            : ListView.builder(
+                                itemCount: listContactsFav.length,
+                                itemBuilder: (context, index) {
+                                  ContactData contactFav =
+                                      listContactsFav[index];
+                                  return ContactTile(contact: contactFav);
+                                },
+                              );
+                      }),
+                )
+              ]),
         //FAB CREAR CONTACTO
         floatingActionButton: FloatingActionButton(
           backgroundColor: const Color.fromARGB(255, 70, 70, 70),

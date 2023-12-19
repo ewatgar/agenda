@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     ThemeData theme = ThemeData.dark(useMaterial3: false);
 
     return ChangeNotifierProvider<AgendaData>(
-      create: (_) => AgendaData.fromJson(agendaJson),
+      create: (_) => AgendaData(), //.fromJson(agendaJson),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Agenda',

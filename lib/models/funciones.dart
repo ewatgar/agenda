@@ -4,7 +4,14 @@ import 'package:agenda/models/agenda.data.dart';
 import 'package:agenda/models/contact.data.dart';
 import 'package:agenda/pages/contactdetails.page.dart';
 import 'package:agenda/pages/contactedit.page.dart';
+import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
+
+int diacriticsCaseAwareCompareTo(String a, String b) {
+  String aFormat = removeDiacritics(a.toUpperCase());
+  String bFormat = removeDiacritics(b.toUpperCase());
+  return aFormat.compareTo(bFormat);
+}
 
 Future<void> navigateToContactDetails(
     BuildContext context, ContactData contact, AgendaData agenda) async {

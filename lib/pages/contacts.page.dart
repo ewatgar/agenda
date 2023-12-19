@@ -91,22 +91,26 @@ class _ContactsPageState extends State<ContactsPage> {
           ],
         ),
         body: agenda.contacts.isEmpty
-            ? Center(
-                child: Wrap(
-                  spacing: 20,
-                  direction: Axis.vertical,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Icon(Icons.account_box_rounded, size: 100),
-                    Text(
-                      "Agenda vacía",
-                      style: TextStyle(fontSize: 35),
-                    ),
-                    Text(
-                      "Toca \"+\" para añadir un contacto",
-                      style: TextStyle(fontSize: 20),
-                    )
-                  ],
+            ? BackgroundGradient(
+                primary: theme.colorScheme.primary,
+                background: theme.colorScheme.background.withAlpha(100),
+                child: Center(
+                  child: Wrap(
+                    spacing: 20,
+                    direction: Axis.vertical,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Icon(Icons.account_box_rounded, size: 100),
+                      Text(
+                        "Agenda vacía",
+                        style: TextStyle(fontSize: 35),
+                      ),
+                      Text(
+                        "Toca \"+\" para añadir un contacto",
+                        style: TextStyle(fontSize: 20),
+                      )
+                    ],
+                  ),
                 ),
               )
             : TabBarView(children: <Widget>[
@@ -127,14 +131,15 @@ class _ContactsPageState extends State<ContactsPage> {
                                   direction: Axis.vertical,
                                   crossAxisAlignment: WrapCrossAlignment.center,
                                   children: [
-                                    Icon(Icons.account_box_rounded, size: 100),
+                                    Icon(Icons.filter_alt_off_rounded,
+                                        size: 100),
                                     Text(
-                                      "Agenda vacía",
-                                      style: TextStyle(fontSize: 35),
+                                      "Sin contactos que mostrar",
+                                      style: TextStyle(fontSize: 30),
                                     ),
                                     Text(
-                                      "Toca \"+\" para añadir un contacto",
-                                      style: TextStyle(fontSize: 20),
+                                      "Cambia los filtros para mostrar contactos",
+                                      style: TextStyle(fontSize: 17),
                                     )
                                   ],
                                 ),

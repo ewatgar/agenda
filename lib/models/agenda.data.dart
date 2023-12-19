@@ -1,10 +1,12 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, prefer_const_constructors
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:agenda/data/agenda.json.dart';
 import 'package:agenda/models/contact.data.dart';
 import 'package:agenda/models/funciones.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AgendaData extends ChangeNotifier {
   //CAMPOS---------------------------------------------------------------------
@@ -87,20 +89,26 @@ class AgendaData extends ChangeNotifier {
     this.notifyListeners();
   }
 
-  //METODOS CREAR/OBTENER JSON ------------------------------------------------
-
-  static String generateJson(AgendaData agenda) {
-    return jsonEncode(agenda.toJson());
+  //METODOS PERSISTENCIA -----------------------------------------------------
+  Future<void> save() async {
+    print("--------------------> Guardando cambios");
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("agenda", jsonEncode(toJson()));
   }
 
-  static Future<AgendaData?> loadJson({required String path}) async {
-    try {
-      String filePath = await File(path).readAsString();
-      Map<String, dynamic> agendaDataJson = jsonDecode(filePath);
-      return AgendaData.fromJson(agendaDataJson);
-    } on Exception catch (e) {
-      print(e);
-      return null;
+  static Future<AgendaData> load([bool bUseDemoData = false]) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await Future.delayed(Duration(seconds: 2));
+    String? agendaJsonStr = prefs.getString("agenda");
+    if (agendaJsonStr != null) {
+      Map<String, dynamic> agendaJson = jsonDecode("agenda");
+      return AgendaData.fromJson(agendaJson);
+    } else {
+      if (bUseDemoData) {
+        return AgendaData.fromJson(agendaDemoJson);
+      } else {
+        return AgendaData();
+      }
     }
   }
 }

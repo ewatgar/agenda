@@ -1,4 +1,4 @@
-Map<String, dynamic> agendaJson = {
+Map<String, dynamic> agendaDemoJson = {
   "contacts": [
     {
       "id": 1,

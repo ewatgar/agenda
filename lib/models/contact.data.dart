@@ -37,8 +37,8 @@ class ContactData extends ChangeNotifier {
         birthdate: DateTime.tryParse(json["birthdate"] ?? ""),
         creation: DateTime.tryParse(json["creation"] ?? ""),
         modification: DateTime.tryParse(json["modification"] ?? ""),
-        isFavorite: json["isFavorite"],
-        labels: json["labels"]);
+        isFavorite: json["isFavorite"] ?? false,
+        labels: [...json["labels"] ?? []]);
   }
 
   //METODOS to ---------------------------------------------------------------
@@ -67,11 +67,11 @@ class ContactData extends ChangeNotifier {
       if (surname != null) "apellido": surname,
       if (email != null) "email": email,
       if (phone != null) "phone": phone,
-      if (birthdate != null) "birthdate": birthdate,
-      if (creation != null) "creation": creation,
-      if (modification != null) "modification": modification,
-      if (birthdate != null) "birthdate": birthdate,
-      if (labels != null) "etiquetas": List.from(labels!),
+      if (birthdate != null) "birthdate": birthdate?.toIso8601String(),
+      if (creation != null) "creation": creation?.toIso8601String(),
+      if (modification != null) "modification": modification?.toIso8601String(),
+      if (isFavorite) "isFavorite": true,
+      if (labels != null && labels!.isNotEmpty) "etiquetas": List.from(labels!),
       "isFavorite": isFavorite,
     };
   }
@@ -118,7 +118,7 @@ class ContactData extends ChangeNotifier {
     );
   }
 
-  //METODOS misc --------------------------------------------------------------
+  //METODOS MISC --------------------------------------------------------------
 
   bool equals(ContactData other) {
     /*
@@ -137,5 +137,9 @@ class ContactData extends ChangeNotifier {
 
   bool isEmpty() {
     return equals(ContactData());
+  }
+
+  void notifyChanges() {
+    notifyListeners();
   }
 }

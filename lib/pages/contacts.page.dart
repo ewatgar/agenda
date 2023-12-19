@@ -5,6 +5,7 @@ import 'package:agenda/models/contact.data.dart';
 import 'package:agenda/models/funciones.dart';
 import 'package:agenda/models/label.enum.dart';
 import 'package:agenda/widgets/backgroundgradient.widget.dart';
+import 'package:agenda/widgets/backgroundmessage.widget.dart';
 import 'package:agenda/widgets/contacttile.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -34,6 +35,7 @@ class _ContactsPageState extends State<ContactsPage> {
                 onPressed: () {
                   setState(() {
                     agenda.isSortedAZ ? agenda.sortZA() : agenda.sortAZ();
+                    agenda.notifyChanges();
                   });
                 },
                 icon: Icon(agenda.isSortedAZ
@@ -56,14 +58,8 @@ class _ContactsPageState extends State<ContactsPage> {
                               onChanged: (value) {
                                 setState(() {
                                   setState2(() {
-                                    print(agenda.filterLabels);
-
-                                    agenda.filterLabels
-                                            .contains(label.toLowerCase())
-                                        ? agenda.filterLabels
-                                            .remove(label.toLowerCase())
-                                        : agenda.filterLabels
-                                            .add(label.toLowerCase());
+                                    _updateFilterLabels(
+                                        agenda, label.toLowerCase());
                                   });
                                 });
                               },
@@ -78,9 +74,7 @@ class _ContactsPageState extends State<ContactsPage> {
                           onChanged: (value) {
                             setState(() {
                               setState2(() {
-                                agenda.filterLabels.contains("noLabels")
-                                    ? agenda.filterLabels.remove("noLabels")
-                                    : agenda.filterLabels.add("noLabels");
+                                _updateFilterLabels(agenda, "noLabels");
                               });
                             });
                           },
@@ -94,24 +88,11 @@ class _ContactsPageState extends State<ContactsPage> {
             ? BackgroundGradient(
                 primary: theme.colorScheme.primary,
                 background: theme.colorScheme.background.withAlpha(100),
-                child: Center(
-                  child: Wrap(
-                    spacing: 20,
-                    direction: Axis.vertical,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Icon(Icons.account_box_rounded, size: 100),
-                      Text(
-                        "Agenda vacía",
-                        style: TextStyle(fontSize: 35),
-                      ),
-                      Text(
-                        "Toca \"+\" para añadir un contacto",
-                        style: TextStyle(fontSize: 20),
-                      )
-                    ],
-                  ),
-                ),
+                child: BackgroundMessage(
+                    title: Text("Agenda vacía", style: TextStyle(fontSize: 35)),
+                    subtitle: Text("Toca \"+\" para añadir un contacto",
+                        style: TextStyle(fontSize: 20)),
+                    icon: Icon(Icons.account_box_rounded, size: 100)),
               )
             : TabBarView(children: <Widget>[
                 //TAB LISTA CONTACTOS
@@ -125,25 +106,14 @@ class _ContactsPageState extends State<ContactsPage> {
                             _contactsListFilter(agenda);
 
                         return contactsFilter.isEmpty
-                            ? Center(
-                                child: Wrap(
-                                  spacing: 20,
-                                  direction: Axis.vertical,
-                                  crossAxisAlignment: WrapCrossAlignment.center,
-                                  children: [
-                                    Icon(Icons.filter_alt_off_rounded,
-                                        size: 100),
-                                    Text(
-                                      "Sin contactos que mostrar",
-                                      style: TextStyle(fontSize: 30),
-                                    ),
-                                    Text(
-                                      "Cambia los filtros para mostrar contactos",
-                                      style: TextStyle(fontSize: 17),
-                                    )
-                                  ],
-                                ),
-                              )
+                            ? BackgroundMessage(
+                                title: Text("Sin contactos que mostrar",
+                                    style: TextStyle(fontSize: 30)),
+                                subtitle: Text(
+                                    "Cambia los filtros para mostrar contactos",
+                                    style: TextStyle(fontSize: 17)),
+                                icon: Icon(Icons.filter_alt_off_rounded,
+                                    size: 100))
                             : ListView.builder(
                                 itemCount: contactsFilter.length,
                                 itemBuilder: (context, index) =>
@@ -170,32 +140,23 @@ class _ContactsPageState extends State<ContactsPage> {
                             .toList();
 
                         return listContactsFav.isEmpty
-                            ? Center(
-                                child: Wrap(
-                                  spacing: 20,
-                                  direction: Axis.vertical,
-                                  crossAxisAlignment: WrapCrossAlignment.center,
-                                  children: [
-                                    Icon(Icons.star, size: 100),
-                                    Text(
-                                      "Sin favoritos",
-                                      style: TextStyle(fontSize: 35),
-                                    ),
-                                    Text(
-                                      "Aquí saldrán tus contactos favoritos",
-                                      style: TextStyle(fontSize: 20),
-                                    )
-                                  ],
-                                ),
-                              )
+                            ? BackgroundMessage(
+                                title: Text("Sin favoritos",
+                                    style: TextStyle(fontSize: 35)),
+                                subtitle: Text(
+                                    "Aquí saldrán tus contactos favoritos",
+                                    style: TextStyle(fontSize: 20)),
+                                icon: Icon(Icons.star, size: 100))
                             : ListView.builder(
                                 itemCount: listContactsFav.length,
-                                itemBuilder: (context, index) {
-                                  ContactData contactFav =
-                                      listContactsFav[index];
-                                  return ContactTile(contact: contactFav);
-                                },
-                              );
+                                itemBuilder: (context, index) =>
+                                    ListenableBuilder(
+                                        listenable: listContactsFav[index],
+                                        builder: (context,
+                                                child) =>
+                                            ContactTile(
+                                                contact:
+                                                    listContactsFav[index])));
                       }),
                 )
               ]),
@@ -216,6 +177,13 @@ class _ContactsPageState extends State<ContactsPage> {
         ]),
       ),
     );
+  }
+
+  void _updateFilterLabels(AgendaData agenda, String label) {
+    agenda.filterLabels.contains(label)
+        ? agenda.filterLabels.remove(label)
+        : agenda.filterLabels.add(label);
+    agenda.notifyChanges();
   }
 
   List<ContactData> _contactsListFilter(AgendaData agenda) {

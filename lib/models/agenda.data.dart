@@ -15,11 +15,15 @@ class AgendaData extends ChangeNotifier {
   List<String> filterLabels;
 
   //CONSTRUCTORES--------------------------------------------------------------
-  AgendaData({List<ContactData>? contacts})
+  AgendaData(
+      {List<ContactData>? contacts,
+      bool? isSortedAZ = false,
+      List<String>? filterLabels})
       : contacts = contacts ?? [],
-        isSortedAZ = false,
-        filterLabels = [];
+        isSortedAZ = isSortedAZ ?? false,
+        filterLabels = filterLabels ?? ["noLabels"];
 
+/*
   factory AgendaData.fromJson(Map<String, dynamic> json) {
     List<Map<String, dynamic>> contactsJson = json["contacts"];
     try {
@@ -29,6 +33,19 @@ class AgendaData extends ChangeNotifier {
       print(e);
       return AgendaData();
     }
+  }*/
+
+  factory AgendaData.fromJson(Map<String, dynamic> json) {
+    return AgendaData(
+        contacts: json["contacts"] != null
+            ? List<Map<String, dynamic>>.from(json["contacts"])
+                .map<ContactData>((e) => ContactData.fromJson(e))
+                .toList()
+            : [],
+        isSortedAZ: json["isSortedAZ"] ?? false,
+        filterLabels: json["filterLabels"] != null
+            ? List<String>.from(json["filterLabels"])
+            : []);
   }
 
   //METODOS TO ---------------------------------------------------------------
@@ -39,10 +56,13 @@ class AgendaData extends ChangeNotifier {
   }
 
   Map<String, dynamic> toJson() {
-    List<Map<String, dynamic>> contactsJson =
-        contacts.map((e) => e.toJson()).toList();
     return {
-      "contacts": [...contactsJson]
+      if (contacts.isNotEmpty) "contacts": [...contacts.map((e) => e.toJson())],
+      "isSortedAZ": isSortedAZ,
+      if (filterLabels.isNotEmpty)
+        "filterLabels": filterLabels
+      else
+        "filterLabels": ["noLabels"]
     };
   }
 
@@ -86,7 +106,8 @@ class AgendaData extends ChangeNotifier {
   }
 
   void notifyChanges() {
-    this.notifyListeners();
+    notifyListeners();
+    save();
   }
 
   //METODOS PERSISTENCIA -----------------------------------------------------
@@ -98,10 +119,12 @@ class AgendaData extends ChangeNotifier {
 
   static Future<AgendaData> load([bool bUseDemoData = false]) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     await Future.delayed(Duration(seconds: 2));
+
     String? agendaJsonStr = prefs.getString("agenda");
     if (agendaJsonStr != null) {
-      Map<String, dynamic> agendaJson = jsonDecode("agenda");
+      Map<String, dynamic> agendaJson = jsonDecode(agendaJsonStr);
       return AgendaData.fromJson(agendaJson);
     } else {
       if (bUseDemoData) {

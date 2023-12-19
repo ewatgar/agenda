@@ -46,7 +46,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
 
     return WillPopScope(
       onWillPop: () async {
-        return await _leavePageSave(context) ?? false;
+        return await _leavePageSave(context, agenda) ?? false;
       },
       child: ListenableBuilder(
           listenable: widget.contact,
@@ -218,11 +218,12 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
     Navigator.of(context).pop();
   }
 
-  Future<bool?> _leavePageSave(BuildContext context) async {
+  Future<bool?> _leavePageSave(BuildContext context, AgendaData agenda) async {
     if (modified) {
       widget.contact.isFavorite = copy.isFavorite;
       widget.contact.labels = copy.labels;
       widget.contact.modification = DateTime.now();
+      agenda.notifyChanges();
       Navigator.of(context).pop(false);
       return false;
     }

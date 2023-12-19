@@ -12,7 +12,8 @@ class LabelIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     (labels ?? []).sort((a, b) => Label.parse(a).compareTo(Label.parse(b)));
-    Label labelPriority = Label.parse(labels?[0] ?? 'other');
+    Label labelPriority = Label.parse(
+        labels != null && labels!.isNotEmpty ? labels![0] : 'other');
 
     return switch (labelPriority) {
       Label.pareja => Icon(Icons.favorite, size: size),

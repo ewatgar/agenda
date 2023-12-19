@@ -1,6 +1,5 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, curly_braces_in_flow_control_structures
 
-import 'package:agenda/data/agenda.json.dart';
 import 'package:agenda/models/agenda.data.dart';
 import 'package:agenda/pages/loading.page.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +24,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    _agenda = AgendaData.load(true);
+    _agenda = AgendaData.load(false);
     _themeTemplate = ThemeData.dark(useMaterial3: false);
     _theme = _themeTemplate.copyWith(
         progressIndicatorTheme: ProgressIndicatorThemeData(

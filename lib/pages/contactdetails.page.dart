@@ -223,7 +223,6 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
       widget.contact.isFavorite = copy.isFavorite;
       widget.contact.labels = copy.labels;
       widget.contact.modification = DateTime.now();
-      agenda.notifyChanges();
       Navigator.of(context).pop(false);
       return false;
     }

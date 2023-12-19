@@ -32,8 +32,10 @@ Future<void> navigateToContactCreation(
   ContactData newContact = ContactData();
   bool reply = await Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => ContactEditPage(contact: newContact, isNew: true)));
-  if (reply) agenda.contacts.add(newContact);
-  agenda.notifyChanges();
+  if (reply) {
+    agenda.contacts.add(newContact);
+    agenda.notifyChanges();
+  }
 }
 
 Future<dynamic> showDialogDeleteContact(BuildContext context, ThemeData theme,
@@ -52,6 +54,7 @@ Future<dynamic> showDialogDeleteContact(BuildContext context, ThemeData theme,
         OutlinedButton(
             onPressed: () {
               agenda.dropContact(id: contact.id);
+              agenda.notifyChanges();
               Navigator.of(context).pop();
             },
             child: Text("Aceptar")),

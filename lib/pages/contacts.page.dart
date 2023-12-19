@@ -183,7 +183,7 @@ class _ContactsPageState extends State<ContactsPage> {
     agenda.filterLabels.contains(label)
         ? agenda.filterLabels.remove(label)
         : agenda.filterLabels.add(label);
-    agenda.notifyChanges();
+    //agenda.notifyChanges();
   }
 
   List<ContactData> _contactsListFilter(AgendaData agenda) {

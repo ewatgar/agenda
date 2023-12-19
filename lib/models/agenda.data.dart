@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print, prefer_const_constructors
 
 import 'dart:convert';
-import 'dart:io';
 import 'package:agenda/data/agenda.json.dart';
 import 'package:agenda/models/contact.data.dart';
 import 'package:agenda/models/funciones.dart';
@@ -22,18 +21,6 @@ class AgendaData extends ChangeNotifier {
       : contacts = contacts ?? [],
         isSortedAZ = isSortedAZ ?? false,
         filterLabels = filterLabels ?? ["noLabels"];
-
-/*
-  factory AgendaData.fromJson(Map<String, dynamic> json) {
-    List<Map<String, dynamic>> contactsJson = json["contacts"];
-    try {
-      return AgendaData(
-          contacts: contactsJson.map((e) => ContactData.fromJson(e)).toList());
-    } on Exception catch (e) {
-      print(e);
-      return AgendaData();
-    }
-  }*/
 
   factory AgendaData.fromJson(Map<String, dynamic> json) {
     return AgendaData(
@@ -112,7 +99,8 @@ class AgendaData extends ChangeNotifier {
 
   //METODOS PERSISTENCIA -----------------------------------------------------
   Future<void> save() async {
-    print("--------------------> Guardando cambios");
+    print("----------------------------------------------> Guardando cambios");
+    print(toJson());
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("agenda", jsonEncode(toJson()));
   }
@@ -125,6 +113,7 @@ class AgendaData extends ChangeNotifier {
     String? agendaJsonStr = prefs.getString("agenda");
     if (agendaJsonStr != null) {
       Map<String, dynamic> agendaJson = jsonDecode(agendaJsonStr);
+      print(agendaJson);
       return AgendaData.fromJson(agendaJson);
     } else {
       if (bUseDemoData) {

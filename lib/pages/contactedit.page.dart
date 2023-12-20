@@ -94,10 +94,7 @@ class _ContactEditPageState extends State<ContactEditPage> {
                     controller: contactNameController,
                     onChanged: (value) {
                       setState(() {
-                        widget.isNew
-                            ? newChanges = contactNameController.text != ''
-                            : newChanges =
-                                contactNameController.text != copy.name;
+                        _checkNewChanges(contactNameController, copy.name);
                       });
                     },
                   ),
@@ -106,10 +103,8 @@ class _ContactEditPageState extends State<ContactEditPage> {
                     controller: contactSurnameController,
                     onChanged: (value) {
                       setState(() {
-                        widget.isNew
-                            ? newChanges = contactSurnameController.text != ''
-                            : newChanges =
-                                contactSurnameController.text != copy.surname;
+                        _checkNewChanges(
+                            contactSurnameController, copy.surname);
                       });
                     },
                   ),
@@ -118,10 +113,7 @@ class _ContactEditPageState extends State<ContactEditPage> {
                     controller: contactPhoneController,
                     onChanged: (value) {
                       setState(() {
-                        widget.isNew
-                            ? newChanges = contactPhoneController.text != ''
-                            : newChanges =
-                                contactPhoneController.text != copy.phone;
+                        _checkNewChanges(contactPhoneController, copy.phone);
                       });
                     },
                   ),
@@ -131,10 +123,7 @@ class _ContactEditPageState extends State<ContactEditPage> {
                     validator: _onValidateContactEmail,
                     onChanged: (value) {
                       setState(() {
-                        widget.isNew
-                            ? newChanges = contactEmailController.text != ''
-                            : newChanges =
-                                contactEmailController.text != copy.email;
+                        _checkNewChanges(contactEmailController, copy.email);
                       });
                     },
                   ),
@@ -167,6 +156,12 @@ class _ContactEditPageState extends State<ContactEditPage> {
             )),
       ),
     );
+  }
+
+  void _checkNewChanges(TextEditingController controller, String? copyValue) {
+    newChanges = widget.isNew
+        ? controller.text.isNotEmpty
+        : controller.text != copyValue;
   }
 
   void _onSaveChanges(AgendaData agenda, BuildContext context) {
